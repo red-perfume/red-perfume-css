@@ -378,8 +378,23 @@ describe('Atomize', () => {
             .rp__9:hover {
               background: #0F0;
             }
-          `, 10),
-          classMap: {},
+          `, 12),
+          classMap: {
+            '.cow': [
+              '.rp__7',
+              '.rp__8',
+              '.rp__9'
+            ],
+            '.example':  [
+              '.rp__0',
+              '.rp__1',
+              '.rp__2',
+              '.rp__3',
+              '.rp__4',
+              '.rp__5',
+              '.rp__6'
+            ]
+          },
           styleErrors: []
         });
 
