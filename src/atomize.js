@@ -251,8 +251,8 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
  * atomized CSS, optionally uglifies the atomized class names, stringifies the
  * AST back to a string. Returns String and Atomization Map.
  *
- * @param  {object}  options      User's options
- * @return {object}               The classMap of original to atomized names and the atomized CSS string
+ * @param  {object} options  User's options
+ * @return {object}          The classMap of original to atomized names and the atomized CSS string
  */
 const atomize = function (options) {
   let input = options.input;
