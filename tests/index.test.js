@@ -143,214 +143,70 @@ describe('Red Perfume', () => {
           `;
 
           test('Normal', () => {
-            const expectedClassMap = {
-              '.pseudo': [
-                '.rp__color__--COLON__--OCTOTHORPF00',
-                '.rp__text-decoration__--COLONnone',
-                '.rp__color__--COLON__--OCTOTHORPA00___-HOVER',
-                '.rp__text-decoration__--COLONunderline___-HOVER'
-              ]
-            };
+            options.uglify = false;
+            options.input = pseudoCSS;
 
-            options = {
-              verbose: true,
-              customLogger: jest.fn(),
-              tasks: [
-                {
-                  uglify: false,
-                  styles: {
-                    data: pseudoCSS,
-                    hooks: {
-                      afterOutput: function (options, { task, inputCss, atomizedCss, classMap, styleErrors }) {
-                        expect(Object.keys(task))
-                          .toEqual(['uglify', 'styles', 'markup', 'scripts', 'hooks']);
-
-                        expect(inputCss)
-                          .toEqual(pseudoCSS);
-
-                        expect(atomizedCss)
-                          .toEqual(testHelpers.trimIndentation(`
-                            .rp__color__--COLON__--OCTOTHORPF00 {
-                              color: #F00;
-                            }
-                            .rp__text-decoration__--COLONnone {
-                              text-decoration: none;
-                            }
-                            .rp__color__--COLON__--OCTOTHORPA00___-HOVER:hover {
-                              color: #A00;
-                            }
-                            .rp__text-decoration__--COLONunderline___-HOVER:hover {
-                              text-decoration: underline;
-                            }
-                          `, 28));
-
-                        expect(classMap)
-                          .toEqual(expectedClassMap);
-
-                        expect(styleErrors)
-                          .toEqual([]);
-                      }
-                    }
-                  },
-                  markup: [
-                    {
-                      data: inputMarkup,
-                      hooks: {
-                        afterOutput: function (options, { task, subTask, classMap, inputHtml, atomizedHtml, markupErrors }) {
-                          expect(Object.keys(task))
-                            .toEqual(['uglify', 'styles', 'markup', 'scripts', 'hooks']);
-
-                          expect(Object.keys(subTask))
-                            .toEqual(['data', 'hooks']);
-
-                          expect(classMap)
-                            .toEqual(expectedClassMap);
-
-                          expect(inputHtml)
-                            .toEqual(inputMarkup);
-
-                          expect(testHelpers.trimIndentation(atomizedHtml))
-                            .toEqual(testHelpers.trimIndentation(`
-                              <!DOCTYPE html><html><head></head><body>
-                                <div class="simple rp__color__--COLON__--OCTOTHORPF00 rp__text-decoration__--COLONnone rp__color__--COLON__--OCTOTHORPA00___-HOVER rp__text-decoration__--COLONunderline___-HOVER"></div>
-                                <div class="after">
-                                  <div class="nested"></div>
-                                </div>
-                              </body></html>
-                            `, 30));
-
-                          expect(markupErrors)
-                            .toEqual([]);
-                        }
-                      }
-                    }
-                  ],
-                  scripts: {
-                    hooks: {
-                      afterOutput: function (options, { task, classMap, scriptErrors }) {
-                        expect(Object.keys(task))
-                          .toEqual(['uglify', 'styles', 'markup', 'scripts', 'hooks']);
-
-                        expect(classMap)
-                          .toEqual(expectedClassMap);
-
-                        expect(scriptErrors)
-                          .toEqual([]);
-                      }
-                    }
+            expect(redPerfume.atomize(options))
+              .toEqual({
+                atomizedCss: testHelpers.trimIndentation(`
+                  .rp__color__--COLON__--OCTOTHORPF00 {
+                    color: #F00;
                   }
-                }
-              ]
-            };
-
-            redPerfume.atomize(options);
+                  .rp__text-decoration__--COLONnone {
+                    text-decoration: none;
+                  }
+                  .rp__color__--COLON__--OCTOTHORPA00___-HOVER:hover {
+                    color: #A00;
+                  }
+                  .rp__text-decoration__--COLONunderline___-HOVER:hover {
+                    text-decoration: underline;
+                  }
+                `, 18),
+                classMap: {
+                  '.pseudo': [
+                    '.rp__color__--COLON__--OCTOTHORPF00',
+                    '.rp__text-decoration__--COLONnone',
+                    '.rp__color__--COLON__--OCTOTHORPA00___-HOVER',
+                    '.rp__text-decoration__--COLONunderline___-HOVER'
+                  ]
+                },
+                styleErrors: []
+              });
 
             expect(options.customLogger)
               .not.toHaveBeenCalled();
           });
 
           test('Uglify', () => {
-            const expectedClassMap = {
-              '.pseudo': [
-                '.rp__0',
-                '.rp__1',
-                '.rp__2',
-                '.rp__3'
-              ]
-            };
+            options.uglify = true;
+            options.input = pseudoCSS;
 
-            options = {
-              verbose: true,
-              customLogger: jest.fn(),
-              tasks: [
-                {
-                  uglify: true,
-                  styles: {
-                    data: pseudoCSS,
-                    hooks: {
-                      afterOutput: function (options, { task, inputCss, atomizedCss, classMap, styleErrors }) {
-                        expect(Object.keys(task))
-                          .toEqual(['uglify', 'styles', 'markup', 'scripts', 'hooks']);
-
-                        expect(inputCss)
-                          .toEqual(pseudoCSS);
-
-                        expect(atomizedCss)
-                          .toEqual(testHelpers.trimIndentation(`
-                            .rp__0 {
-                              color: #F00;
-                            }
-                            .rp__1 {
-                              text-decoration: none;
-                            }
-                            .rp__2:hover {
-                              color: #A00;
-                            }
-                            .rp__3:hover {
-                              text-decoration: underline;
-                            }
-                          `, 28));
-
-                        expect(classMap)
-                          .toEqual(expectedClassMap);
-
-                        expect(styleErrors)
-                          .toEqual([]);
-                      }
-                    }
-                  },
-                  markup: [
-                    {
-                      data: inputMarkup,
-                      hooks: {
-                        afterOutput: function (options, { task, subTask, classMap, inputHtml, atomizedHtml, markupErrors }) {
-                          expect(Object.keys(task))
-                            .toEqual(['uglify', 'styles', 'markup', 'scripts', 'hooks']);
-
-                          expect(Object.keys(subTask))
-                            .toEqual(['data', 'hooks']);
-
-                          expect(classMap)
-                            .toEqual(expectedClassMap);
-
-                          expect(inputHtml)
-                            .toEqual(inputMarkup);
-
-                          expect(testHelpers.trimIndentation(atomizedHtml))
-                            .toEqual(testHelpers.trimIndentation(`
-                              <!DOCTYPE html><html><head></head><body>
-                                <div class="simple rp__0 rp__1 rp__2 rp__3"></div>
-                                <div class="after">
-                                  <div class="nested"></div>
-                                </div>
-                              </body></html>
-                            `, 30));
-
-                          expect(markupErrors)
-                            .toEqual([]);
-                        }
-                      }
-                    }
-                  ],
-                  scripts: {
-                    hooks: {
-                      afterOutput: function (options, { task, classMap, scriptErrors }) {
-                        expect(Object.keys(task))
-                          .toEqual(['uglify', 'styles', 'markup', 'scripts', 'hooks']);
-
-                        expect(classMap)
-                          .toEqual(expectedClassMap);
-
-                        expect(scriptErrors)
-                          .toEqual([]);
-                      }
-                    }
+            expect(redPerfume.atomize(options))
+              .toEqual({
+                atomizedCss: testHelpers.trimIndentation(`
+                  .rp__0 {
+                    color: #F00;
                   }
-                }
-              ]
-            };
-
-            redPerfume.atomize(options);
+                  .rp__1 {
+                    text-decoration: none;
+                  }
+                  .rp__2:hover {
+                    color: #A00;
+                  }
+                  .rp__3:hover {
+                    text-decoration: underline;
+                  }
+                `, 18),
+                classMap: {
+                  '.pseudo': [
+                    '.rp__0',
+                    '.rp__1',
+                    '.rp__2',
+                    '.rp__3'
+                  ]
+                },
+                styleErrors: []
+              });
 
             expect(options.customLogger)
               .not.toHaveBeenCalled();
