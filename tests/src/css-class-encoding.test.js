@@ -8,16 +8,17 @@
 
 const classEncoding = require('@/css-class-encoding.js');
 const constants = require('@/constants.js');
+const validator = require('@/validator.js');
 
 describe('Class encoding', () => {
   let options;
   const error = constants.IMPRESSED_MESSAGE;
 
   beforeEach(() => {
-    options = {
+    options = validator.validateOptions({
       verbose: true,
       customLogger: jest.fn()
-    };
+    });
   });
 
   describe('Bad inputs', () => {
