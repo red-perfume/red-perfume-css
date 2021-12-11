@@ -8,12 +8,27 @@
 const helpers = require('./helpers.js');
 
 const validator = {
+  /**
+   * Validates and defaults would-be booleans.
+   *
+   * @param  {boolean} key    Value to validate
+   * @param  {boolean} value  Default value to use if not a boolean
+   * @return {boolean}        The value or default
+   */
   validateBoolean: function (key, value) {
     if (typeof(key) !== 'boolean') {
       key = value;
     }
     return key;
   },
+  /**
+   * Validates a value is a string.
+   *
+   * @param  {object} options  User's options
+   * @param  {string} value    Value that should be a string
+   * @param  {string} message  The message to log if not a string
+   * @return {string}          The string or undefined
+   */
   validateString: function (options, value, message) {
     if (value === '' || (value && typeof(value) !== 'string')) {
       value = undefined;
@@ -24,6 +39,12 @@ const validator = {
     }
     return value;
   },
+  /**
+   * Validates optional customLogger is a function.
+   *
+   * @param  {object} options  User's options
+   * @return {object}          Modified user's options
+   */
   validateCustomLogger: function (options) {
     if (!options.customLogger) {
       delete options.customLogger;
@@ -33,6 +54,12 @@ const validator = {
     }
     return options;
   },
+  /**
+   * Validates and defaults all values in the options object.
+   *
+   * @param  {object} options  User's options
+   * @return {object}          Modified user's options
+   */
   validateOptions: function (options) {
     if (typeof(options) !== 'object' || Array.isArray(options)) {
       options = undefined;
