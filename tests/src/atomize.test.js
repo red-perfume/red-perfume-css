@@ -6,22 +6,31 @@
  * @author  TheJaredWilcurt
  */
 
-const css = require('@/atomize.js');
+const validator = require('@/validator.js');
+const atomize = require('@/atomize.js');
 
 const testHelpers = require('@@/testHelpers.js');
 
 describe('CSS', () => {
   let options;
+  let consoleError;
   const errorResponse = {
     classMap: {},
     atomizedCss: ''
   };
 
   beforeEach(() => {
-    options = {
+    consoleError = console.error;
+    console.error = jest.fn();
+    options = validator.validateOptions({
       verbose: true,
       customLogger: jest.fn()
-    };
+    });
+  });
+
+  afterEach(() => {
+    console.error = consoleError;
+    consoleError = undefined;
   });
 
   describe('removeIdenticalProperties', () => {
@@ -37,7 +46,7 @@ describe('CSS', () => {
         ]
       };
 
-      css.removeIdenticalProperties(classMap);
+      atomize.removeIdenticalProperties(classMap);
 
       expect(classMap)
         .toEqual({
@@ -52,16 +61,31 @@ describe('CSS', () => {
   });
 
   describe('Bad inputs', () => {
-    test('Empty', () => {
-      expect(css())
+    test('Empty object', () => {
+      options = validator.validateOptions({});
+
+      expect(atomize(options))
         .toEqual(errorResponse);
 
-      expect(options.customLogger)
-        .not.toHaveBeenCalled();
+      expect(console.error)
+        .toHaveBeenCalledWith(
+          testHelpers.trimIndentation(`_________________________
+            Red-Perfume-CSS:
+            Invalid CSS input.`, 12),
+          undefined
+        );
+
+      expect(console.error)
+        .toHaveBeenCalledWith(
+          testHelpers.trimIndentation(`_________________________
+            Red-Perfume-CSS:
+            Error parsing CSS`, 12),
+          undefined
+        );
     });
 
     test('Just options', () => {
-      expect(css(options))
+      expect(atomize(options))
         .toEqual(errorResponse);
 
       expect(options.customLogger)
@@ -69,7 +93,7 @@ describe('CSS', () => {
     });
 
     test('Options, empty string', () => {
-      expect(css(options, ''))
+      expect(atomize(options, ''))
         .toEqual(errorResponse);
 
       expect(options.customLogger)
@@ -77,7 +101,7 @@ describe('CSS', () => {
     });
 
     test('Options, HTML', () => {
-      expect(css(options, '<h1>Bad</h1>'))
+      expect(atomize(options, '<h1>Bad</h1>'))
         .toEqual(errorResponse);
 
       let firstError = options.customLogger.mock.calls[0];
@@ -106,7 +130,7 @@ describe('CSS', () => {
       `, 8);
       const uglify = false;
 
-      expect(css(options, input, uglify))
+      expect(atomize(options, input, uglify))
         .toEqual({ classMap, atomizedCss });
 
       expect(options.customLogger)
@@ -127,7 +151,7 @@ describe('CSS', () => {
       `, 8);
       const uglify = true;
 
-      expect(css(options, input, uglify))
+      expect(atomize(options, input, uglify))
         .toEqual({ classMap, atomizedCss });
 
       expect(options.customLogger)
@@ -158,7 +182,7 @@ describe('CSS', () => {
         }
       `;
 
-      expect(css(options, input, false).atomizedCss)
+      expect(atomize(options, input, false).atomizedCss)
         .toEqual(testHelpers.trimIndentation(`
           h1 {
             background: #F00;
@@ -184,7 +208,7 @@ describe('CSS', () => {
           }
         `, 10));
 
-      expect(css(options, input, true).atomizedCss)
+      expect(atomize(options, input, true).atomizedCss)
         .toEqual(testHelpers.trimIndentation(`
           h1 {
             background: #F00;
@@ -245,7 +269,7 @@ describe('CSS', () => {
         }
       `;
 
-      expect(css(options, input, false).atomizedCss)
+      expect(atomize(options, input, false).atomizedCss)
         .toEqual(testHelpers.trimIndentation(`
           .rp__display__--COLONinline-block {
             display: inline-block;
@@ -282,7 +306,7 @@ describe('CSS', () => {
           }
         `, 10));
 
-      expect(css(options, input, true).atomizedCss)
+      expect(atomize(options, input, true).atomizedCss)
         .toEqual(testHelpers.trimIndentation(`
           h1:hover {
             color: #F00;
