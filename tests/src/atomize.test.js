@@ -128,7 +128,7 @@ describe('Atomize', () => {
         ...options,
         input: '.test { background: #F00; }',
         uglify: true
-      })
+      });
 
       expect(atomize(options))
         .toEqual({
@@ -273,7 +273,7 @@ describe('Atomize', () => {
         ...options,
         input: psuedoClasses,
         uglify: false
-      })
+      });
 
       expect(atomize(options))
         .toEqual({
@@ -313,20 +313,20 @@ describe('Atomize', () => {
             }
           `, 12),
           classMap: {
-            ".cow": [
-              ".rp__background__--COLON__--OCTOTHORPF00",
-              ".rp__color__--COLON__--OCTOTHORP00F",
-              ".rp__background__--COLON__--OCTOTHORP0F0___-HOVER",
+            '.cow': [
+              '.rp__background__--COLON__--OCTOTHORPF00',
+              '.rp__color__--COLON__--OCTOTHORP00F',
+              '.rp__background__--COLON__--OCTOTHORP0F0___-HOVER'
             ],
-            ".example": [
-              ".rp__display__--COLONinline-block",
-              ".rp__text-align__--COLONright",
-              ".rp__display__--COLONblock___-HOVER",
-              ".rp__text-align__--COLONcenter___-HOVER",
-              ".rp__color__--COLON__--OCTOTHORPF00___-ACTIVE",
-              ".rp__color__--COLON__--OCTOTHORP00F___-VISITED",
-              ".rp__content__--COLON__--SINGLEQUOTE__--SINGLEQUOTE___-HOVER___-AFTER",
-            ],
+            '.example': [
+              '.rp__display__--COLONinline-block',
+              '.rp__text-align__--COLONright',
+              '.rp__display__--COLONblock___-HOVER',
+              '.rp__text-align__--COLONcenter___-HOVER',
+              '.rp__color__--COLON__--OCTOTHORPF00___-ACTIVE',
+              '.rp__color__--COLON__--OCTOTHORP00F___-VISITED',
+              '.rp__content__--COLON__--SINGLEQUOTE__--SINGLEQUOTE___-HOVER___-AFTER'
+            ]
           },
           styleErrors: []
         });
