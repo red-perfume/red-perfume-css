@@ -259,7 +259,7 @@ const atomize = function (options) {
   let uglify = options.uglify;
   let styleErrors = options.styleErrors;
 
-  const message = 'Error parsing CSS';
+  const message = 'Error parsing CSS.';
   let parsed;
   try {
     parsed = cssParser(options, input, styleErrors);

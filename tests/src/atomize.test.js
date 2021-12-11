@@ -79,7 +79,7 @@ describe('Atomize', () => {
         .toHaveBeenCalledWith(
           testHelpers.trimIndentation(`_________________________
             Red-Perfume-CSS:
-            Error parsing CSS`, 12),
+            Error parsing CSS.`, 12),
           undefined
         );
     });
@@ -92,7 +92,7 @@ describe('Atomize', () => {
         .toHaveBeenCalledWith('Invalid CSS input.', undefined);
 
       expect(options.customLogger)
-        .toHaveBeenCalledWith('Error parsing CSS', undefined);
+        .toHaveBeenCalledWith('Error parsing CSS.', undefined);
     });
   });
 

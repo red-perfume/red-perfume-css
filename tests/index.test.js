@@ -27,14 +27,30 @@ describe('Red Perfume', () => {
         console.error = jest.fn();
 
         expect(redPerfumeCss())
-          .toEqual(undefined);
+          .toEqual({
+            atomizedCss: '',
+            classMap: {}
+          });
 
         expect(console.error)
-          .toHaveBeenCalledWith(testHelpers.trimIndentation(`
-            _________________________
-            Red-Perfume:
-            options.tasks Must be an array of objects. See documentation for details.
-          `, 12));
+          .toHaveBeenCalledWith(
+            testHelpers.trimIndentation(`
+              _________________________
+              Red-Perfume-CSS:
+              Invalid CSS input.
+            `, 14),
+            undefined
+          );
+
+        expect(console.error)
+          .toHaveBeenCalledWith(
+            testHelpers.trimIndentation(`
+              _________________________
+              Red-Perfume-CSS:
+              Error parsing CSS.
+            `, 14),
+            undefined
+          );
 
         console.error = consoleError;
         consoleError = undefined;
