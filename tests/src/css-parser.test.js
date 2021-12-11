@@ -7,15 +7,16 @@
  */
 
 const cssParser = require('@/css-parser.js');
+const validator = require('@/validator.js');
 
 describe('CSS parser', () => {
   let options;
 
   beforeEach(() => {
-    options = {
+    options = validator.validateOptions({
       verbose: false,
       customLogger: jest.fn()
-    };
+    });
   });
 
   describe('Bad inputs', () => {
