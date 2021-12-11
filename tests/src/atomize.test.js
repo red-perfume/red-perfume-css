@@ -94,6 +94,22 @@ describe('Atomize', () => {
       expect(options.customLogger)
         .toHaveBeenCalledWith('Error parsing CSS.', undefined);
     });
+
+    test('Broken css', () => {
+      options = validator.validateOptions({
+        ...options,
+        input: '.dog { .cow { background: 13px ]'
+      });
+
+      expect(atomize(options))
+        .toEqual(errorResponse);
+
+      expect(options.customLogger)
+        .toHaveBeenCalledWith('Error parsing CSS.', new Error('undefined:1:8: missing \'}\''));
+
+      expect(options.customLogger)
+        .toHaveBeenCalledWith('Error parsing CSS.', '.dog { .cow { background: 13px ]');
+    });
   });
 
   describe('Process CSS', () => {
