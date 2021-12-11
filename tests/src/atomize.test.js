@@ -115,7 +115,8 @@ describe('Atomize', () => {
             '.test': [
               '.rp__background__--COLON__--OCTOTHORPF00'
             ]
-          }
+          },
+          styleErrors: []
         });
 
       expect(options.customLogger)
@@ -123,21 +124,26 @@ describe('Atomize', () => {
     });
 
     test('One rule uglified', () => {
-      const input = '.test { background: #F00; }';
-      const classMap = {
-        '.test': [
-          '.rp__0'
-        ]
-      };
-      const atomizedCss = testHelpers.trimIndentation(`
-        .rp__0 {
-          background: #F00;
-        }
-      `, 8);
-      const uglify = true;
+      options = validator.validateOptions({
+        ...options,
+        input: '.test { background: #F00; }',
+        uglify: true
+      })
 
-      expect(atomize(options, input, uglify))
-        .toEqual({ classMap, atomizedCss });
+      expect(atomize(options))
+        .toEqual({
+          atomizedCss: testHelpers.trimIndentation(`
+            .rp__0 {
+              background: #F00;
+            }
+          `, 12),
+          classMap: {
+            '.test': [
+              '.rp__0'
+            ]
+          },
+          styleErrors: []
+        });
 
       expect(options.customLogger)
         .not.toHaveBeenCalled();
