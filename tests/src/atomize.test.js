@@ -6,7 +6,7 @@
  * @author  TheJaredWilcurt
  */
 
-const css = require('@/css.js');
+const css = require('@/atomize.js');
 
 const testHelpers = require('@@/testHelpers.js');
 

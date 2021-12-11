@@ -6,7 +6,7 @@
  * @author  TheJaredWilcurt
  */
 
-const redPerfume = require('../index.js');
+const redPerfumeCss = require('../index.js');
 
 const testHelpers = require('@@/testHelpers.js');
 
@@ -26,7 +26,7 @@ describe('Red Perfume', () => {
         let consoleError = console.error;
         console.error = jest.fn();
 
-        expect(redPerfume.atomize())
+        expect(redPerfumeCss())
           .toEqual(undefined);
 
         expect(console.error)
@@ -46,7 +46,7 @@ describe('Red Perfume', () => {
         options.uglify = true;
         options.input = '.example { padding: 10px; margin: 10px; }';
 
-        expect(redPerfume.atomize(options))
+        expect(redPerfumeCss(options))
           .toEqual({
             atomizedCss: testHelpers.trimIndentation(`
               .rp__0 {
@@ -79,7 +79,7 @@ describe('Red Perfume', () => {
             options.uglify = false;
             options.input = simpleCSS;
 
-            expect(redPerfume.atomize(options))
+            expect(redPerfumeCss(options))
               .toEqual({
                 atomizedCss: testHelpers.trimIndentation(`
                   .rp__padding__--COLON10px {
@@ -106,7 +106,7 @@ describe('Red Perfume', () => {
             options.uglify = true;
             options.input = simpleCSS;
 
-            expect(redPerfume.atomize(options))
+            expect(redPerfumeCss(options))
               .toEqual({
                 atomizedCss: testHelpers.trimIndentation(`
                   .rp__0 {
@@ -146,7 +146,7 @@ describe('Red Perfume', () => {
             options.uglify = false;
             options.input = pseudoCSS;
 
-            expect(redPerfume.atomize(options))
+            expect(redPerfumeCss(options))
               .toEqual({
                 atomizedCss: testHelpers.trimIndentation(`
                   .rp__color__--COLON__--OCTOTHORPF00 {
@@ -181,7 +181,7 @@ describe('Red Perfume', () => {
             options.uglify = true;
             options.input = pseudoCSS;
 
-            expect(redPerfume.atomize(options))
+            expect(redPerfumeCss(options))
               .toEqual({
                 atomizedCss: testHelpers.trimIndentation(`
                   .rp__0 {

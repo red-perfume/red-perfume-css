@@ -15,7 +15,7 @@ const atomize = require('./src/atomize.js');
  * @return {object}          Object with atomized CSS and classNames object
  */
 const redPerfumeCss = function (options) {
-  options = validator(options);
+  options = validator.validateOptions(options);
   return atomize(options);
 };
 

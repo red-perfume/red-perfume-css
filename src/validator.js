@@ -80,13 +80,4 @@ const validator = {
   }
 };
 
-/**
- * Validates the users options and sets default values.
- * Logs warnings.
- *
- * @param  {object} options  User's options
- * @return {object}          Defaulted/validated user options
- */
-module.exports = function (options) {
-  return validator.validateOptions(options);
-};
+module.exports = validator;
