@@ -96,6 +96,8 @@ describe('Validator', () => {
     });
 
     test('Non-string', () => {
+      options = validator.validateOptions(options);
+
       expect(validator.validateString(options, {}, 'message'))
         .toEqual(undefined);
 
@@ -136,17 +138,21 @@ describe('Validator', () => {
     });
 
     test('Non-function', () => {
+      options = validator.validateOptions(options);
       options.customLogger = {};
 
       expect(validator.validateCustomLogger(options).hasOwnProperty('customLogger'))
         .toEqual(false);
 
       expect(console.error)
-        .toHaveBeenCalledWith(testHelpers.trimIndentation(`
-          _________________________
-          Red-Perfume-CSS:
-          Optional customLogger must be a type of function.
-        `, 10));
+        .toHaveBeenCalledWith(
+          testHelpers.trimIndentation(`
+            _________________________
+            Red-Perfume-CSS:
+            Optional customLogger must be a type of function.
+          `, 12),
+          undefined
+        );
     });
 
     test('Function', () => {
