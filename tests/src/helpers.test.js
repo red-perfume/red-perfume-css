@@ -7,6 +7,8 @@
  */
 
 const helpers = require('@/helpers.js');
+const validator = require('@/validator.js');
+
 const longMessage = [
   'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et',
   'dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex',
@@ -39,12 +41,12 @@ describe('helpers', () => {
     let consoleError;
     const output = [
       '_________________________',
-      'Red-Perfume:',
+      'Red-Perfume-CSS:',
       ...longMessage
     ].join('\n');
 
     beforeEach(() => {
-      options = { verbose: true };
+      options = validator.validateOptions({ verbose: true });
       consoleError = console.error;
       console.error = jest.fn();
     });
@@ -65,7 +67,7 @@ describe('helpers', () => {
       helpers.throwError(options, longMessage.join(' '));
 
       expect(console.error)
-        .toHaveBeenCalledWith(output);
+        .toHaveBeenCalledWith(output, undefined);
     });
   });
 });
