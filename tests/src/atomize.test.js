@@ -11,7 +11,7 @@ const atomize = require('@/atomize.js');
 
 const testHelpers = require('@@/testHelpers.js');
 
-describe('CSS', () => {
+describe('Atomize', () => {
   let options;
   let consoleError;
   const errorResponse = {
@@ -89,49 +89,34 @@ describe('CSS', () => {
         .toEqual(errorResponse);
 
       expect(options.customLogger)
-        .toHaveBeenCalledWith('Error parsing CSS', '');
-    });
-
-    test('Options, empty string', () => {
-      expect(atomize(options, ''))
-        .toEqual(errorResponse);
+        .toHaveBeenCalledWith('Invalid CSS input.', undefined);
 
       expect(options.customLogger)
-        .toHaveBeenCalledWith('Error parsing CSS', '');
-    });
-
-    test('Options, HTML', () => {
-      expect(atomize(options, '<h1>Bad</h1>'))
-        .toEqual(errorResponse);
-
-      let firstError = options.customLogger.mock.calls[0];
-      let secondError = options.customLogger.mock.calls[1];
-
-      expect(JSON.stringify(firstError))
-        .toEqual('["Error parsing CSS",{"reason":"missing \'{\'","line":1,"column":13,"source":""}]');
-
-      expect(secondError)
-        .toEqual(['Error parsing CSS', '<h1>Bad</h1>']);
+        .toHaveBeenCalledWith('Error parsing CSS', undefined);
     });
   });
 
   describe('Process CSS', () => {
     test('One rule', () => {
-      const input = '.test { background: #F00; }';
-      const classMap = {
-        '.test': [
-          '.rp__background__--COLON__--OCTOTHORPF00'
-        ]
-      };
-      const atomizedCss = testHelpers.trimIndentation(`
-        .rp__background__--COLON__--OCTOTHORPF00 {
-          background: #F00;
-        }
-      `, 8);
-      const uglify = false;
+      options = validator.validateOptions({
+        ...options,
+        input: '.test { background: #F00; }',
+        uglify: false
+      });
 
-      expect(atomize(options, input, uglify))
-        .toEqual({ classMap, atomizedCss });
+      expect(atomize(options))
+        .toEqual({
+          atomizedCss: testHelpers.trimIndentation(`
+            .rp__background__--COLON__--OCTOTHORPF00 {
+              background: #F00;
+            }
+          `, 12),
+          classMap: {
+            '.test': [
+              '.rp__background__--COLON__--OCTOTHORPF00'
+            ]
+          }
+        });
 
       expect(options.customLogger)
         .not.toHaveBeenCalled();
