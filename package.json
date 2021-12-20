@@ -27,8 +27,7 @@
     "eslint-config-tjw-jsdoc": "^1.0.0",
     "eslint-plugin-jest": "^25.3.0",
     "eslint-plugin-jsdoc": "^36.0.8",
-    "jest": "24.9.0",
-    "mock-fs": "^5.0.0"
+    "jest": "24.9.0"
   },
   "homepage": "https://github.com/red-perfume/red-perfume-css#readme",
   "repository": {
