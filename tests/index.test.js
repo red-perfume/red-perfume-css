@@ -228,6 +228,78 @@ describe('Red Perfume', () => {
               .not.toHaveBeenCalled();
           });
         });
+
+        describe('Qualifying', () => {
+          const qualifyingCSS = `
+            h1.qualifying {
+              border: 1px solid #000;
+              padding: 10px;
+              line-height: 1.4;
+            }
+          `;
+
+          test('Normal', () => {
+            options.uglify = false;
+            options.input = qualifyingCSS;
+
+            expect(redPerfumeCss(options))
+              .toEqual({
+                atomizedCss: testHelpers.trimIndentation(`
+                  h1.rp__border__--COLON1px____--solid____--__--OCTOTHORP000 {
+                    border: 1px solid #000;
+                  }
+                  h1.rp__padding__--COLON10px {
+                    padding: 10px;
+                  }
+                  h1.rp__line-height__--COLON1__--DOT4 {
+                    line-height: 1.4;
+                  }
+                `, 18),
+                classMap: {
+                  'h1.qualifying': [
+                    '.rp__border__--COLON1px____--solid____--__--OCTOTHORP000',
+                    '.rp__padding__--COLON10px',
+                    '.rp__line-height__--COLON1__--DOT4'
+                  ]
+                },
+                styleErrors: []
+              });
+
+            expect(options.customLogger)
+              .not.toHaveBeenCalled();
+          });
+
+          test('Uglify', () => {
+            options.uglify = true;
+            options.input = qualifyingCSS;
+
+            expect(redPerfumeCss(options))
+              .toEqual({
+                atomizedCss: testHelpers.trimIndentation(`
+                  h1.rp__0 {
+                    border: 1px solid #000;
+                  }
+                  h1.rp__1 {
+                    padding: 10px;
+                  }
+                  h1.rp__2 {
+                    line-height: 1.4;
+                  }
+                `, 18),
+                classMap: {
+                  'h1.qualifying': [
+                    '.rp__0',
+                    '.rp__1',
+                    '.rp__2'
+                  ]
+                },
+                styleErrors: []
+              });
+
+            expect(options.customLogger)
+              .not.toHaveBeenCalled();
+          });
+        });
       });
     });
   });
