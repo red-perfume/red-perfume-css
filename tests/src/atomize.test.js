@@ -133,7 +133,7 @@ describe('Atomize', () => {
               .rp__background__--COLON__--OCTOTHORPF00 {
                 background: #F00;
               }
-            `, 12),
+            `, 14),
             classMap: {
               '.test': [
                 '.rp__background__--COLON__--OCTOTHORPF00'
@@ -159,7 +159,7 @@ describe('Atomize', () => {
               .rp__0 {
                 background: #F00;
               }
-            `, 12),
+            `, 14),
             classMap: {
               '.test': [
                 '.rp__0'
@@ -219,7 +219,7 @@ describe('Atomize', () => {
                 color: #FF0;
                 z-index: 2;
               }
-            `, 12),
+            `, 14),
             classMap: {},
             styleErrors: []
           });
@@ -254,7 +254,7 @@ describe('Atomize', () => {
                 color: #FF0;
                 z-index: 2;
               }
-            `, 12),
+            `, 14),
             classMap: {},
             styleErrors: []
           });
@@ -338,7 +338,7 @@ describe('Atomize', () => {
               .rp__background__--COLON__--OCTOTHORP0F0___-HOVER:hover {
                 background: #0F0;
               }
-            `, 12),
+            `, 14),
             classMap: {
               '.cow': [
                 '.rp__background__--COLON__--OCTOTHORPF00',
@@ -405,7 +405,7 @@ describe('Atomize', () => {
               .rp__9:hover {
                 background: #0F0;
               }
-            `, 12),
+            `, 14),
             classMap: {
               '.cow': [
                 '.rp__7',
