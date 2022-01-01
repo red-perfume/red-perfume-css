@@ -58,7 +58,7 @@ describe('CSS parser', () => {
                   [
                     {
                       action: 'element',
-                      ignoreCase: false,
+                      ignoreCase: 'quirks',
                       name: 'class',
                       namespace: null,
                       original: '.test',
