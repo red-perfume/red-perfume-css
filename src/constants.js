@@ -15,11 +15,11 @@ const IMPRESSED_MESSAGE = 'A rule declaration was missing details, ' +
   'just meant for a safety check. Honestly, if you actually got ' +
   'this error, I\'m kind of impressed.';
 
-const PREFIX = {
+const PREFIX = Object.freeze({
   PSUEDO: '___-',
   SPACE: '_____-',
   SYMBOL: '__--'
-};
+});
 
 module.exports = {
   IMPRESSED_MESSAGE,
