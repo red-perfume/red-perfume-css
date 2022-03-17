@@ -5,8 +5,8 @@
  * @author  TheJaredWilcurt
  */
 
-const validator = require('./src/validator.js');
 const atomize = require('./src/atomize.js');
+const validator = require('./src/validator.js');
 
 /**
  * Red-Perfume-CSS library entry point.
