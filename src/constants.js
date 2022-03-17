@@ -10,11 +10,18 @@ const IMPRESSED_MESSAGE = 'A rule declaration was missing details, ' +
   '.rp__width__--COLONundefined, .rp__undefined__--COLON100px, or ' +
   '.rp__undefined__--COLONundefined. If there are multiples of ' +
   'these, they may replace the previous. Please report this error ' +
-  'to github.com/red-perfume/red-perfume/issues because I have no ' +
-  'idea how to reproduce it with actual CSS input. This was just ' +
-  'meant for a safety check. Honestly, if you actually got this ' +
-  'error, I\'m kind of impressed.';
+  'to github.com/red-perfume/red-perfume-css/issues because I have ' +
+  'no idea how to reproduce it with actual CSS input. This was ' +
+  'just meant for a safety check. Honestly, if you actually got ' +
+  'this error, I\'m kind of impressed.';
+
+const PREFIX = {
+  PSUEDO: '___-',
+  SPACE: '_____-',
+  SYMBOL: '__--'
+};
 
 module.exports = {
-  IMPRESSED_MESSAGE
+  IMPRESSED_MESSAGE,
+  PREFIX
 };

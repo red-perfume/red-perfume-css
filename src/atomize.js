@@ -5,10 +5,11 @@
  * @author  TheJaredWilcurt
  */
 
+const constants = require('./constants.js');
+const encodeClassName = require('./css-class-encoding.js');
 const cssParser = require('./css-parser.js');
 const cssStringify = require('./css-stringify.js');
 const cssUglifier = require('./css-uglifier.js');
-const encodeClassName = require('./css-class-encoding.js');
 const helpers = require('./helpers.js');
 
 /**
@@ -132,7 +133,7 @@ function encodeDeclarationAsClassname (options, rule, declaration, classMap, new
     selectorParts.forEach(function (selectorPart) {
       if (selectorPart.type && selectorPart.type === 'pseudo') {
         let pseudoName = selectorPart.name;
-        encodedPseudoNames.push('___-' + pseudoName.toUpperCase());
+        encodedPseudoNames.push(constants.PREFIX.PSUEDO + pseudoName.toUpperCase());
         pseudoNames.push(':' + pseudoName);
       }
     });
