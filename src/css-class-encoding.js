@@ -8,54 +8,64 @@
 const constants = require('./constants.js');
 const helpers = require('./helpers.js');
 
+const symbolMap = {
+  '&': 'AMPERSAND',
+  '*': 'ASTERISK',
+  '@': 'ATSIGN',
+  '\\': 'BACKSLASH',
+  '^': 'CARET',
+  '¢': 'CENT',
+  '>': 'CLOSEANGLEBRACKET',
+  '}': 'CLOSECURLYBRACE',
+  ')': 'CLOSEPAREN',
+  ']': 'CLOSESQUAREBRACKET',
+  ':': 'COLON',
+  ',': 'COMMA',
+  '©': 'COPYRIGHT',
+  '¤': 'CURRENCY',
+  '°': 'DEGREE',
+  '÷': 'DIVIDE',
+  $: 'DOLARSIGN',
+  '.': 'DOT',
+  '"': 'DOUBLEQUOTE',
+  '=': 'EQUAL',
+  '!': 'EXCLAMATION',
+  '/': 'FORWARDSLASH',
+  '`': 'GRAVE',
+  '½': 'HALF',
+  µ: 'MU',
+  '#': 'OCTOTHORP',
+  '<': 'OPENANGLEBRACKET',
+  '{': 'OPENCURLYBRACE',
+  '(': 'OPENPAREN',
+  '[': 'OPENSQUAREBRACKET',
+  '¶': 'PARAGRAPH',
+  '%': 'PERCENT',
+  '|': 'PIPE',
+  '+': 'PLUS',
+  '±': 'PLUSMINUS',
+  '£': 'POUNDSTERLING',
+  '¼': 'QUARTER',
+  '?': 'QUESTIONMARK',
+  '®': 'REGISTERED',
+  ';': 'SEMICOLON',
+  '\'': 'SINGLEQUOTE',
+  '¾': 'THREEQUARTERS',
+  '~': 'TILDE',
+  '¥': 'YENYUAN'
+};
+
+const prefixedSymbolMap = {};
+
+Object.keys(symbolMap).forEach(function (key) {
+  prefixedSymbolMap[key] = constants.PREFIX.SYMBOL + symbolMap[key];
+});
+
 // Initially I thought this too verbose, but there is literally no limit on class lengths other than the machine's memory/CPU.
 // Firefox actually let me create and reference a classname with 100,000,000 characters. It was slow, but it worked fine.
 const propertyValueEncodingMap = {
-  '&': '__--AMPERSAND',
-  '*': '__--ASTERISK',
-  '@': '__--ATSIGN',
-  '\\': '__--BACKSLASH',
-  '^': '__--CARET',
-  '¢': '__--CENT',
-  '>': '__--CLOSEANGLEBRACKET',
-  '}': '__--CLOSECURLYBRACE',
-  ')': '__--CLOSEPAREN',
-  ']': '__--CLOSESQUAREBRACKET',
-  ':': '__--COLON',
-  ',': '__--COMMA',
-  '©': '__--COPYRIGHT',
-  '¤': '__--CURRENCY',
-  '°': '__--DEGREE',
-  '÷': '__--DIVIDE',
-  '$': '__--DOLARSIGN',
-  '.': '__--DOT',
-  '"': '__--DOUBLEQUOTE',
-  '=': '__--EQUAL',
-  '!': '__--EXCLAMATION',
-  '/': '__--FORWARDSLASH',
-  '`': '__--GRAVE',
-  '½': '__--HALF',
-  'µ': '__--MU',
-  '#': '__--OCTOTHORP',
-  '<': '__--OPENANGLEBRACKET',
-  '{': '__--OPENCURLYBRACE',
-  '(': '__--OPENPAREN',
-  '[': '__--OPENSQUAREBRACKET',
-  '¶': '__--PARAGRAPH',
-  '%': '__--PERCENT',
-  '|': '__--PIPE',
-  '+': '__--PLUS',
-  '±': '__--PLUSMINUS',
-  '£': '__--POUNDSTERLING',
-  '¼': '__--QUARTER',
-  '?': '__--QUESTIONMARK',
-  '®': '__--REGISTERED',
-  ';': '__--SEMICOLON',
-  '\'': '__--SINGLEQUOTE',
-  '¾': '__--THREEQUARTERS',
-  '~': '__--TILDE',
-  '¥': '__--YENYUAN',
-  ' ': '_____-'
+  ...prefixedSymbolMap,
+  ' ': constants.PREFIX.SPACE
 };
 
 /**
@@ -72,7 +82,7 @@ function unicodeEncoding (character) {
   let code = character.charCodeAt();
   // 33 = !, 48 = 0, 65 = A, 97 = a, 126 = ~
   if (code < 33 || code > 126) {
-    return '__--U' + code;
+    return constants.PREFIX.SYMBOL + 'U' + code;
   }
 }
 
