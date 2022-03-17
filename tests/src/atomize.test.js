@@ -6,8 +6,8 @@
  * @author  TheJaredWilcurt
  */
 
-const validator = require('@/validator.js');
 const atomize = require('@/atomize.js');
+const validator = require('@/validator.js');
 
 const testHelpers = require('@@/testHelpers.js');
 
@@ -412,7 +412,7 @@ describe('Atomize', () => {
                 '.rp__8',
                 '.rp__9'
               ],
-              '.example':  [
+              '.example': [
                 '.rp__0',
                 '.rp__1',
                 '.rp__2',

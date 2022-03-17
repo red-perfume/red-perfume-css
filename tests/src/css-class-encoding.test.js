@@ -6,8 +6,8 @@
  * @author  TheJaredWilcurt
  */
 
-const classEncoding = require('@/css-class-encoding.js');
 const constants = require('@/constants.js');
+const classEncoding = require('@/css-class-encoding.js');
 const validator = require('@/validator.js');
 
 describe('Class encoding', () => {

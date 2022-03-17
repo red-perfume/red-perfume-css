@@ -5,18 +5,22 @@
  * @author  TheJaredWilcurt
  */
 
+const path = require('path');
+
 module.exports = {
-  parser: 'babel-eslint',
   parserOptions: {
-    ecmaVersion: 2017
+    parser: '@babel/eslint-parser',
+    ecmaVersion: 2022,
+    sourceType: 'module'
   },
   env: {
-    'es6': true,
-    'node': true,
-    'jest': true
+    es6: true,
+    node: true,
+    jest: true
   },
   extends: [
     'tjw-base',
+    'tjw-import',
     'tjw-jest',
     'tjw-jsdoc'
   ],
@@ -29,6 +33,21 @@ module.exports = {
         skipComments: true
       }
     ],
+    'jsdoc/check-examples': 'off',
     'jsdoc/require-example': 'off'
+  },
+  settings: {
+    'import/resolver': {
+      webpack: {
+        config: {
+          resolve: {
+            alias: {
+              '@': path.resolve('src'),
+              '@@': path.resolve('tests')
+            }
+          }
+        }
+      }
+    }
   }
 };
