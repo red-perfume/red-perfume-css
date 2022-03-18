@@ -33,7 +33,7 @@ function removeIdenticalProperties (classMap) {
 /**
  * Updates the map of selectors to their atomized classes.
  *
- * @param  {object} classMap          The class map object used by the HTML/JSON
+ * @param  {object} classMap          The class map object used by the HTML/JSON connect original to atomized class names
  * @param  {Array}  selectors         Parsed CSS selectors
  * @param  {string} encodedClassName  Encoded class name
  * @return {object}                   Returns the classMap object
