@@ -438,8 +438,8 @@ describe('Atomize', () => {
         }
       `;
 
-      test('Normal', () => {
-        validator.validateOptions({
+      test('ttNormal', () => {
+        options = validator.validateOptions({
           ...options,
           input,
           uglify: false
@@ -466,7 +466,7 @@ describe('Atomize', () => {
       });
 
       test('Uglified', () => {
-        validator.validateOptions({
+        options = validator.validateOptions({
           ...options,
           input,
           uglify: true
