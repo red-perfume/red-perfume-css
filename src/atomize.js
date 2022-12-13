@@ -12,7 +12,8 @@ const {
   OUTPUT,
   RULE,
   SELECTOR,
-  SELECTORS
+  SELECTORS,
+  UGLIFYRESULT
 } = require('../api-type-definitions.js');
 
 const constants = require('./constants.js');
@@ -171,7 +172,7 @@ function encodeDeclarationAsClassname (options, rule, declaration, classMap, new
  * Takes atomized class names and uglifies them.
  *
  * @param {CLASSMAP} classMap  Map of original CSS selectors to encoded class names
- * @param {object}   newRules  The atomized CSS as AST
+ * @param {RULE}     newRules  The atomized CSS as AST
  */
 function uglifyClassNames (classMap, newRules) {
   let index = 0;
@@ -183,6 +184,9 @@ function uglifyClassNames (classMap, newRules) {
         split.shift(0);
         pseudo = ':' + split.join(':');
       }
+      /**
+       * @type {UGLIFYRESULT}
+       */
       let result = cssUglifier(index);
 
       index = result.index;
@@ -206,11 +210,11 @@ function uglifyClassNames (classMap, newRules) {
 /**
  * Loop over all rules and atomize as needed.
  *
- * @param {object}   options      User's options
+ * @param {OPTIONS}  options      User's options
  * @param {RULE[]}   rules        CSS Rules as AST including selectors
  * @param {CLASSMAP} classMap     Map of original CSS selectors to encoded class names
- * @param {object}   newRules     The atomized CSS as AST
- * @param {Array}    styleErrors  Array of style related errors
+ * @param {RULE}     newRules     The atomized CSS as AST
+ * @param {string[]} styleErrors  Array of style related errors
  */
 function processRules (options, rules, classMap, newRules, styleErrors) {
   /* A rule looks like:

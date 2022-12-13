@@ -8,6 +8,8 @@
 const css = require('css');
 const selectorParse = require('css-what').parse;
 
+const { OPTIONS, STYLESHEETAST } = require('../api-type-definitions.js');
+
 const helpers = require('./helpers.js');
 
 /**
@@ -43,10 +45,10 @@ function recursivelyRemovePosition (rule) {
  *   parsed = cssParser(options, input);
  * } catch {}
  *
- * @param  {object} options      User's options
- * @param  {string} input        The CSS string to be atomized
- * @param  {Array}  styleErrors  Array of style related errors
- * @return {object}              A parsed CSS AST
+ * @param  {OPTIONS}       options      User's options
+ * @param  {string}        input        The CSS string to be atomized
+ * @param  {string[]}      styleErrors  Array of style related errors
+ * @return {STYLESHEETAST}              A parsed CSS AST
  */
 const cssParser = function (options, input, styleErrors) {
   styleErrors = styleErrors || [];

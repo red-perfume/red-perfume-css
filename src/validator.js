@@ -45,7 +45,7 @@ const validator = {
    * Validates optional customLogger is a function.
    *
    * @param  {OPTIONS} options  User's options
-   * @return {object}           Modified user's options
+   * @return {OPTIONS}          Modified user's options
    */
   validateCustomLogger: function (options) {
     if (!options.customLogger) {
@@ -60,7 +60,7 @@ const validator = {
    * Validates and defaults all values in the options object.
    *
    * @param  {OPTIONS} [options]  User's options
-   * @return {object}             Modified user's options
+   * @return {OPTIONS}            Modified user's options
    */
   validateOptions: function (options) {
     if (typeof(options) !== 'object' || Array.isArray(options)) {

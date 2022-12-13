@@ -25,13 +25,14 @@
 
 /**
  * @typedef  {object}  SELECTORCHUNK
- * @property {string}  type           The type of selector ('tag', 'attribute')
- * @property {string}  name           Selector name ('class')
- * @property {string}  action         Action ('element')
- * @property {string}  value          Actual selector value ('cow')
- * @property {boolean} ignoreCase     If casing should be ignored (false)
- * @property {string}  namespace      Not sure what this is (null)
- * @property {string}  original       The original value for this selector ('.cow')
+ * @property {string}  type           The type of selector ('tag', 'attribute', 'pseudo')
+ * @property {string}  name           Selector name ('class', 'hover')
+ * @property {string}  [action]       Action ('element')
+ * @property {string}  [value]        Actual selector value ('cow')
+ * @property {boolean} [ignoreCase]   If casing should be ignored (false)
+ * @property {string}  [namespace]    Not sure what this is (null)
+ * @property {string}  [data]         Not sure what this is (null)
+ * @property {string}  [original]     The original value for this selector ('.cow')
  */
 
 /**
@@ -58,6 +59,25 @@
  * @property {string}       type          The type of the AST ('rule')
  * @property {SELECTORS}    selectors     Array of arrays containing AST objects for each part of the CSS Selector
  * @property {DECLARATIONS} declarations  Array of declaration objects for each property/value pair
+ */
+
+/**
+ * @typedef  {object} STYLESHEET
+ * @property {string} [source]       Not sure what this is (undefined)
+ * @property {RULE[]} rules          Array of all rules in the the stylesheet
+ * @property {Array}  parsingErrors  Not sure what this is (empty array)
+ */
+
+/**
+ * @typedef  {object}     STYLESHEETAST
+ * @property {string}     type           The type of the AST ('stylesheet')
+ * @property {STYLESHEET} stylesheet     Object containing the Rules AST
+ */
+
+/**
+ * @typedef  {object} UGLIFYRESULT
+ * @property {string} name          An uglified class name ('.rp__b5z2')
+ * @property {number} index         The index number used (520958)
  */
 
 /**
@@ -113,6 +133,21 @@ let DECLARATIONS;
 let RULE;
 
 /**
+ * @type {STYLESHEET}
+ */
+let STYLESHEET;
+
+/**
+ * @type {STYLESHEETAST}
+ */
+let STYLESHEETAST;
+
+/**
+ * @type {UGLIFYRESULT}
+ */
+let UGLIFYRESULT;
+
+/**
  * @type {OUTPUT}
  */
 let OUTPUT;
@@ -127,5 +162,8 @@ module.exports = {
   DECLARATION,
   DECLARATIONS,
   RULE,
+  STYLESHEET,
+  STYLESHEETAST,
+  UGLIFYRESULT,
   OUTPUT
 };
