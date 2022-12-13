@@ -5,6 +5,8 @@
  * @author  TheJaredWilcurt
  */
 
+const { OPTIONS } = require('../api-type-definitions.js');
+
 const helpers = require('./helpers.js');
 
 const validator = {
@@ -24,10 +26,10 @@ const validator = {
   /**
    * Validates a value is a string.
    *
-   * @param  {object} options  User's options
-   * @param  {string} value    Value that should be a string
-   * @param  {string} message  The message to log if not a string
-   * @return {string}          The string or undefined
+   * @param  {OPTIONS} options  User's options
+   * @param  {string}  value    Value that should be a string
+   * @param  {string}  message  The message to log if not a string
+   * @return {string}           The string or undefined
    */
   validateString: function (options, value, message) {
     if (value === '' || (value && typeof(value) !== 'string')) {
@@ -42,8 +44,8 @@ const validator = {
   /**
    * Validates optional customLogger is a function.
    *
-   * @param  {object} options  User's options
-   * @return {object}          Modified user's options
+   * @param  {OPTIONS} options  User's options
+   * @return {object}           Modified user's options
    */
   validateCustomLogger: function (options) {
     if (!options.customLogger) {
@@ -57,8 +59,8 @@ const validator = {
   /**
    * Validates and defaults all values in the options object.
    *
-   * @param  {object} options  User's options
-   * @return {object}          Modified user's options
+   * @param  {OPTIONS} [options]  User's options
+   * @return {object}             Modified user's options
    */
   validateOptions: function (options) {
     if (typeof(options) !== 'object' || Array.isArray(options)) {

@@ -5,6 +5,12 @@
  * @author  TheJaredWilcurt
  */
 
+const {
+  CLASSMAP,
+  OPTIONS,
+  OUTPUT
+} = require('../api-type-definitions.js');
+
 const constants = require('./constants.js');
 const encodeClassName = require('./css-class-encoding.js');
 const cssParser = require('./css-parser.js');
@@ -18,7 +24,7 @@ const helpers = require('./helpers.js');
  * `display: block; display: none;` is unchanged because they
  * are not identical.
  *
- * @param {object} classMap  The class map object used by the HTML/JSON
+ * @param {CLASSMAP} classMap  The class map object used by the HTML/JSON
  */
 function removeIdenticalProperties (classMap) {
   // Remove identical properties
@@ -33,10 +39,10 @@ function removeIdenticalProperties (classMap) {
 /**
  * Updates the map of selectors to their atomized classes.
  *
- * @param  {object} classMap          The class map object used by the HTML/JSON
- * @param  {Array}  selectors         Parsed CSS selectors
- * @param  {string} encodedClassName  Encoded class name
- * @return {object}                   Returns the classMap object
+ * @param  {CLASSMAP} classMap          The class map object used by the HTML/JSON
+ * @param  {Array}    selectors         Parsed CSS selectors
+ * @param  {string}   encodedClassName  Encoded class name
+ * @return {object}                     Returns the classMap object
  */
 function updateClassMap (classMap, selectors, encodedClassName) {
   /*
@@ -110,12 +116,12 @@ function handleNonClasses (rule, newRules) {
  * Handles psuedo selectors too, like :hover. Mutates the classMap and
  * newRules.
  *
- * @param {object} options      User's options
- * @param {object} rule         A CSS Rule as AST including selectors
- * @param {object} declaration  A single CSS proptery/value pair as AST
- * @param {object} classMap     Map of original CSS selectors to encoded class names
- * @param {object} newRules     The atomized CSS as AST
- * @param {Array}  styleErrors  Array of style related errors
+ * @param {OPTIONS}  options      User's options
+ * @param {object}   rule         A CSS Rule as AST including selectors
+ * @param {object}   declaration  A single CSS proptery/value pair as AST
+ * @param {CLASSMAP} classMap     Map of original CSS selectors to encoded class names
+ * @param {object}   newRules     The atomized CSS as AST
+ * @param {Array}    styleErrors  Array of style related errors
  */
 function encodeDeclarationAsClassname (options, rule, declaration, classMap, newRules, styleErrors) {
   /* An encoded class name look like:
@@ -153,8 +159,8 @@ function encodeDeclarationAsClassname (options, rule, declaration, classMap, new
 /**
  * Takes atomized class names and uglifies them.
  *
- * @param {object} classMap  Map of original CSS selectors to encoded class names
- * @param {object} newRules  The atomized CSS as AST
+ * @param {CLASSMAP} classMap  Map of original CSS selectors to encoded class names
+ * @param {object}   newRules  The atomized CSS as AST
  */
 function uglifyClassNames (classMap, newRules) {
   let index = 0;
@@ -189,11 +195,11 @@ function uglifyClassNames (classMap, newRules) {
 /**
  * Loop over all rules and atomize as needed.
  *
- * @param {object} options      User's options
- * @param {Array}  rules        CSS Rules as AST including selectors
- * @param {object} classMap     Map of original CSS selectors to encoded class names
- * @param {object} newRules     The atomized CSS as AST
- * @param {Array}  styleErrors  Array of style related errors
+ * @param {object}   options      User's options
+ * @param {Array}    rules        CSS Rules as AST including selectors
+ * @param {CLASSMAP} classMap     Map of original CSS selectors to encoded class names
+ * @param {object}   newRules     The atomized CSS as AST
+ * @param {Array}    styleErrors  Array of style related errors
  */
 function processRules (options, rules, classMap, newRules, styleErrors) {
   /* A rule looks like:
@@ -252,8 +258,8 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
  * atomized CSS, optionally uglifies the atomized class names, stringifies the
  * AST back to a string. Returns String and Atomization Map.
  *
- * @param  {object} options  User's options
- * @return {object}          The classMap of original to atomized names and the atomized CSS string
+ * @param  {OPTIONS} options  User's options
+ * @return {OUTPUT}             Object with atomized CSS, classNames object, and styleErrors array
  */
 const atomize = function (options) {
   let input = options.input;
