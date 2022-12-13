@@ -137,7 +137,7 @@ function handleNonClasses (rule, newRules) {
  */
 function encodeDeclarationAsClassname (options, rule, declaration, classMap, newRules, styleErrors) {
   /* An encoded class name look like:
-    .rp__padding__--COLON10px
+    `.rp__padding__--COLON10px`
   */
   let encodedClassName = encodeClassName(options, declaration, styleErrors);
 
