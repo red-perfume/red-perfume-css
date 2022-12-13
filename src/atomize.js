@@ -130,7 +130,7 @@ function handleNonClasses (rule, newRules) {
  *
  * @param {OPTIONS}     options      User's options
  * @param {RULE}        rule         A CSS Rule as AST including selectors
- * @param {DECLARATION} declaration  A single CSS proptery/value pair as AST
+ * @param {DECLARATION} declaration  A single CSS propterty/value pair as AST
  * @param {CLASSMAP}    classMap     Map of original CSS selectors to encoded class names
  * @param {RULE}        newRules     The atomized CSS as AST
  * @param {string[]}    styleErrors  Array of style related errors
