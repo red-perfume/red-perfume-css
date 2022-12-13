@@ -24,6 +24,43 @@
  */
 
 /**
+ * @typedef  {object}  SELECTORCHUNK
+ * @property {string}  type           The type of selector ('tag', 'attribute')
+ * @property {string}  name           Selector name ('class')
+ * @property {string}  action         Action ('element')
+ * @property {string}  value          Actual selector value ('cow')
+ * @property {boolean} ignoreCase     If casing should be ignored (false)
+ * @property {string}  namespace      Not sure what this is (null)
+ * @property {string}  original       The original value for this selector ('.cow')
+ */
+
+/**
+ * @typedef {SELECTORCHUNK[]} SELECTOR
+ */
+
+/**
+ * @typedef {SELECTOR[]} SELECTORS
+ */
+
+/**
+ * @typedef  {object} DECLARATION
+ * @property {string} type      The type of AST ('declaration')
+ * @property {string} property  The CSS property name ('background', 'width')
+ * @property {string} value     The CSS value ('#F00', '100px')
+ */
+
+/**
+ * @typedef {DECLARATION[]} DECLARATIONS
+ */
+
+/**
+ * @typedef  {object}       RULE
+ * @property {string}       type          The type of the AST ('rule')
+ * @property {SELECTORS}    selectors     Array of arrays containing AST objects for each part of the CSS Selector
+ * @property {DECLARATIONS} declarations  Array of declaration objects for each property/value pair
+ */
+
+/**
  * @typedef  {object}   OUTPUT
  * @property {CLASSMAP} classMap     Example: { '.cow': ['.rp__0', '.rp__1'], '.moo': ['.rp__2', '.rp__1'] }
  * @property {string}   atomizedCss  A string of atomized CSS styles
@@ -31,9 +68,9 @@
  */
 
 /**
- * @type {CLASSMAP}
+ * @type {CUSTOMLOGGER}
  */
-let CLASSMAP;
+let CUSTOMLOGGER;
 
 /**
  * @type {OPTIONS}
@@ -41,13 +78,54 @@ let CLASSMAP;
 let OPTIONS;
 
 /**
+ * @type {CLASSMAP}
+ */
+let CLASSMAP;
+
+/**
+ * @type {SELECTORCHUNK}
+ */
+let SELECTORCHUNK;
+
+/**
+ * @type {SELECTOR}
+ */
+let SELECTOR;
+
+/**
+ * @type {SELECTORS}
+ */
+let SELECTORS;
+
+/**
+ * @type {DECLARATION}
+ */
+let DECLARATION;
+
+/**
+ * @type {DECLARATIONS}
+ */
+let DECLARATIONS;
+
+/**
+ * @type {RULE}
+ */
+let RULE;
+
+/**
  * @type {OUTPUT}
  */
 let OUTPUT;
 
-
 module.exports = {
-  CLASSMAP,
+  CUSTOMLOGGER,
   OPTIONS,
+  CLASSMAP,
+  SELECTORCHUNK,
+  SELECTOR,
+  SELECTORS,
+  DECLARATION,
+  DECLARATIONS,
+  RULE,
   OUTPUT
 };
