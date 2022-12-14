@@ -17,19 +17,19 @@
   ],
   "dependencies": {
     "css": "^3.0.0",
-    "css-what": "^6.0.1"
+    "css-what": "^6.1.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.16.5",
-    "eslint": "^8.7.0",
+    "@babel/eslint-parser": "^7.19.1",
+    "eslint": "^8.29.0",
     "eslint-config-tjw-base": "^2.0.0",
     "eslint-config-tjw-import": "^1.0.0",
     "eslint-config-tjw-jest": "^2.0.0",
-    "eslint-config-tjw-jsdoc": "^1.0.0",
+    "eslint-config-tjw-jsdoc": "^1.0.3",
     "eslint-import-resolver-webpack": "^0.13.2",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-jest": "^26.1.1",
-    "eslint-plugin-jsdoc": "^38.0.4",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^27.1.6",
+    "eslint-plugin-jsdoc": "^39.6.4",
     "jest": "24.9.0"
   },
   "homepage": "https://github.com/red-perfume/red-perfume-css#readme",
