@@ -130,15 +130,13 @@ function handleNonClasses (rule, newRules) {
  *
  * @param {OPTIONS}     options      User's options
  * @param {RULE}        rule         A CSS Rule as AST including selectors
- * @param {DECLARATION} declaration  A single CSS propterty/value pair as AST
+ * @param {DECLARATION} declaration  A single CSS property/value pair as AST
  * @param {CLASSMAP}    classMap     Map of original CSS selectors to encoded class names
  * @param {RULE}        newRules     The atomized CSS as AST
  * @param {string[]}    styleErrors  Array of style related errors
  */
 function encodeDeclarationAsClassname (options, rule, declaration, classMap, newRules, styleErrors) {
-  /* An encoded class name look like:
-    `.rp__padding__--COLON10px`
-  */
+  // An encoded class name looks like `.rp__padding__--COLON10px`
   let encodedClassName = encodeClassName(options, declaration, styleErrors);
 
   // Array of comma separated selectors on a specific rule
