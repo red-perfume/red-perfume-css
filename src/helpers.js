@@ -5,6 +5,8 @@
  * @author  TheJaredWilcurt
  */
 
+const { OPTIONS } = require('../api-type-definitions.js');
+
 const helpers = {
   /**
    * Takes a string and replaces spaces with returns if
@@ -36,9 +38,9 @@ const helpers = {
    * console.error when errors/warnings happen
    * during validation or execution.
    *
-   * @param {object} options  User's options on verbose and custom logging
-   * @param {string} message  Human readable warning/error
-   * @param {any}    error    Caught error object
+   * @param {OPTIONS} options  User's options on verbose and custom logging
+   * @param {string}  message  Human readable warning/error
+   * @param {any}     error    Caught error object
    */
   throwError: function (options, message, error) {
     options.styleErrors.push({ message, error });

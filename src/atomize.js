@@ -5,6 +5,17 @@
  * @author  TheJaredWilcurt
  */
 
+const {
+  CLASSMAP,
+  DECLARATION,
+  OPTIONS,
+  OUTPUT,
+  RULE,
+  SELECTOR,
+  SELECTORS,
+  UGLIFYRESULT
+} = require('../api-type-definitions.js');
+
 const constants = require('./constants.js');
 const encodeClassName = require('./css-class-encoding.js');
 const cssParser = require('./css-parser.js');
@@ -18,7 +29,7 @@ const helpers = require('./helpers.js');
  * `display: block; display: none;` is unchanged because they
  * are not identical.
  *
- * @param {object} classMap  The class map object used by the HTML/JSON
+ * @param {CLASSMAP} classMap  The class map object used by the HTML/JSON
  */
 function removeIdenticalProperties (classMap) {
   // Remove identical properties
@@ -33,10 +44,10 @@ function removeIdenticalProperties (classMap) {
 /**
  * Updates the map of selectors to their atomized classes.
  *
- * @param  {object} classMap          The class map object used by the HTML/JSON
- * @param  {Array}  selectors         Parsed CSS selectors
- * @param  {string} encodedClassName  Encoded class name
- * @return {object}                   Returns the classMap object
+ * @param  {CLASSMAP}  classMap          The class map object used by the HTML/JSON
+ * @param  {SELECTORS} selectors         Parsed CSS selectors
+ * @param  {string}    encodedClassName  Encoded class name
+ * @return {CLASSMAP}                    Returns the classMap object
  */
 function updateClassMap (classMap, selectors, encodedClassName) {
   /*
@@ -78,14 +89,21 @@ function updateClassMap (classMap, selectors, encodedClassName) {
       ]
     ]
   */
-  selectors.forEach(function (selector) {
-    let originalSelectorName = selector[0].original;
-    // '.cow:hover' => '.cow'
-    originalSelectorName = originalSelectorName.split(':')[0];
+  selectors.forEach(
+    /**
+     * Process each selector.
+     *
+     * @param {SELECTOR} selector  Array of selector chunks
+     */
+    function (selector) {
+      let originalSelectorName = selector[0].original;
+      // '.cow:hover' => '.cow'
+      originalSelectorName = originalSelectorName.split(':')[0];
 
-    classMap[originalSelectorName] = classMap[originalSelectorName] || [];
-    classMap[originalSelectorName].push(encodedClassName.split(':')[0]);
-  });
+      classMap[originalSelectorName] = classMap[originalSelectorName] || [];
+      classMap[originalSelectorName].push(encodedClassName.split(':')[0]);
+    }
+  );
   return classMap;
 }
 
@@ -93,8 +111,8 @@ function updateClassMap (classMap, selectors, encodedClassName) {
  * Ensure that non-classes are not atomized,
  * but still included in the output.
  *
- * @param {object} rule      Parsed CSS Rule
- * @param {object} newRules  Object containing all unique rules
+ * @param {RULE} rule      Parsed CSS Rule
+ * @param {RULE} newRules  Object containing all unique rules
  */
 function handleNonClasses (rule, newRules) {
   let originalSelectorName = rule.selectors[0][0].original;
@@ -110,17 +128,15 @@ function handleNonClasses (rule, newRules) {
  * Handles psuedo selectors too, like :hover. Mutates the classMap and
  * newRules.
  *
- * @param {object} options      User's options
- * @param {object} rule         A CSS Rule as AST including selectors
- * @param {object} declaration  A single CSS proptery/value pair as AST
- * @param {object} classMap     Map of original CSS selectors to encoded class names
- * @param {object} newRules     The atomized CSS as AST
- * @param {Array}  styleErrors  Array of style related errors
+ * @param {OPTIONS}     options      User's options
+ * @param {RULE}        rule         A CSS Rule as AST including selectors
+ * @param {DECLARATION} declaration  A single CSS property/value pair as AST
+ * @param {CLASSMAP}    classMap     Map of original CSS selectors to encoded class names
+ * @param {RULE}        newRules     The atomized CSS as AST
+ * @param {string[]}    styleErrors  Array of style related errors
  */
 function encodeDeclarationAsClassname (options, rule, declaration, classMap, newRules, styleErrors) {
-  /* An encoded class name look like:
-    .rp__padding__--COLON10px
-  */
+  // An encoded class name looks like `.rp__padding__--COLON10px`
   let encodedClassName = encodeClassName(options, declaration, styleErrors);
 
   // Array of comma separated selectors on a specific rule
@@ -153,8 +169,8 @@ function encodeDeclarationAsClassname (options, rule, declaration, classMap, new
 /**
  * Takes atomized class names and uglifies them.
  *
- * @param {object} classMap  Map of original CSS selectors to encoded class names
- * @param {object} newRules  The atomized CSS as AST
+ * @param {CLASSMAP} classMap  Map of original CSS selectors to encoded class names
+ * @param {RULE}     newRules  The atomized CSS as AST
  */
 function uglifyClassNames (classMap, newRules) {
   let index = 0;
@@ -166,6 +182,9 @@ function uglifyClassNames (classMap, newRules) {
         split.shift(0);
         pseudo = ':' + split.join(':');
       }
+      /**
+       * @type {UGLIFYRESULT}
+       */
       let result = cssUglifier(index);
 
       index = result.index;
@@ -189,11 +208,11 @@ function uglifyClassNames (classMap, newRules) {
 /**
  * Loop over all rules and atomize as needed.
  *
- * @param {object} options      User's options
- * @param {Array}  rules        CSS Rules as AST including selectors
- * @param {object} classMap     Map of original CSS selectors to encoded class names
- * @param {object} newRules     The atomized CSS as AST
- * @param {Array}  styleErrors  Array of style related errors
+ * @param {OPTIONS}  options      User's options
+ * @param {RULE[]}   rules        CSS Rules as AST including selectors
+ * @param {CLASSMAP} classMap     Map of original CSS selectors to encoded class names
+ * @param {RULE}     newRules     The atomized CSS as AST
+ * @param {string[]} styleErrors  Array of style related errors
  */
 function processRules (options, rules, classMap, newRules, styleErrors) {
   /* A rule looks like:
@@ -226,25 +245,40 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
        ]
      }
   */
-  rules.forEach(function (rule) {
-    // TODO: I think this needs improved
-    let type = rule.selectors[0][0].type;
-    let name = rule.selectors[0][0].name;
-    if (type === 'tag' || (type === 'attribute' && name !== 'class')) {
-      handleNonClasses(rule, newRules);
-    } else {
-      /* A declaration looks like:
-        {
-          type: 'declaration',
-          property: 'padding',
-          value: '10px'
-        }
-      */
-      rule.declarations.forEach(function (declaration) {
-        encodeDeclarationAsClassname(options, rule, declaration, classMap, newRules, styleErrors);
-      });
+  rules.forEach(
+    /**
+     * Process each CSS rule.
+     *
+     * @param {RULE} rule  AST of a CSS Rule
+     */
+    function (rule) {
+      // TODO: I think this needs improved
+      let type = rule.selectors[0][0].type;
+      let name = rule.selectors[0][0].name;
+      if (type === 'tag' || (type === 'attribute' && name !== 'class')) {
+        handleNonClasses(rule, newRules);
+      } else {
+        rule.declarations.forEach(
+          /**
+           * Process each declaration.
+           *
+           * @example
+           * A declaration looks like:
+           * {
+           *   type: 'declaration',
+           *   property: 'padding',
+           *   value: '10px'
+           * }
+           *
+           * @param {DECLARATION} declaration  A property/value pair.
+           */
+          function (declaration) {
+            encodeDeclarationAsClassname(options, rule, declaration, classMap, newRules, styleErrors);
+          }
+        );
+      }
     }
-  });
+  );
 }
 
 /**
@@ -252,8 +286,8 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
  * atomized CSS, optionally uglifies the atomized class names, stringifies the
  * AST back to a string. Returns String and Atomization Map.
  *
- * @param  {object} options  User's options
- * @return {object}          The classMap of original to atomized names and the atomized CSS string
+ * @param  {OPTIONS} options  User's options
+ * @return {OUTPUT}           Object with atomized CSS, classNames object, and styleErrors array
  */
 const atomize = function (options) {
   let input = options.input;

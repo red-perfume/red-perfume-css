@@ -5,6 +5,11 @@
  * @author  TheJaredWilcurt
  */
 
+const {
+  DECLARATION,
+  OPTIONS
+} = require('../api-type-definitions.js');
+
 const constants = require('./constants.js');
 const helpers = require('./helpers.js');
 
@@ -84,21 +89,22 @@ function unicodeEncoding (character) {
   if (code < 33 || code > 126) {
     return constants.PREFIX.SYMBOL + 'U' + code;
   }
+  return;
 }
 
 // TODO: Eventually this should be an option user's can provide.
 const prefix = 'rp__';
 
 /**
- * Encodes propter/value pairs as valid, decodable classnames.
+ * Encodes property/value pairs as valid, decodable classnames.
  *
  * @example
  * let encodedClassName = encodeClassName(options, declaration);
  *
- * @param  {object} options      User's passed in options, containing verbose/customLoger
- * @param  {object} declaration  Contains the Property and Value strings
- * @param  {Array}  styleErrors  Array containing all style related errors
- * @return {string}              A classname starting with . and a prefix
+ * @param  {OPTIONS}     options      User's passed in options, containing verbose/customLoger
+ * @param  {DECLARATION} declaration  Contains the Property and Value strings
+ * @param  {string[]}    styleErrors  Array of strings for all style related errors
+ * @return {string}                   A classname starting with . and a prefix
  */
 function encodeClassName (options, declaration, styleErrors) {
   styleErrors = styleErrors || [];

@@ -5,6 +5,11 @@
  * @author  TheJaredWilcurt
  */
 
+const { UGLIFYRESULT } = require('../api-type-definitions.js');
+
+// a-z,0-9
+const alphanumeric = 36;
+
 /**
  * Increment the Uglifier index if it contains a known bad
  * value when base 36 encoded.
@@ -23,7 +28,7 @@ function incrementIfContainsBad (uglifierIndex) {
    * @return {boolean}        true = contains bad word, false = no bad word found
    */
   function containsBad (value) {
-    return uglifierIndex.toString(36).includes(value);
+    return uglifierIndex.toString(alphanumeric).includes(value);
   }
   while (knownBad.some(containsBad)) {
     uglifierIndex = uglifierIndex + 1;
@@ -34,8 +39,8 @@ function incrementIfContainsBad (uglifierIndex) {
 /**
  * Produces an class name with a prefix and a base 36 encoded index.
  *
- * @param  {number} uglifierIndex  A starting value
- * @return {object}                The class "name" and the incremented "index" number
+ * @param  {number}       uglifierIndex  A starting value
+ * @return {UGLIFYRESULT}                The class "name" and the incremented "index" number
  */
 function cssUglifier (uglifierIndex) {
   uglifierIndex = uglifierIndex || 0;
@@ -46,7 +51,7 @@ function cssUglifier (uglifierIndex) {
   uglifierIndex = incrementIfContainsBad(uglifierIndex);
 
   return {
-    name: '.rp__' + uglifierIndex.toString(36),
+    name: '.rp__' + uglifierIndex.toString(alphanumeric),
     index: uglifierIndex + 1
   };
 }

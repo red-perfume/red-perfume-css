@@ -7,11 +7,13 @@
 
 const css = require('css');
 
+const { STYLESHEETAST } = require('../api-type-definitions.js');
+
 /**
  * Takes in a CSS AST and turns it into a string of CSS.
  *
- * @param  {object} input  A CSS Abstract Syntax Tree (AST)
- * @return {string}        Valid CSS (not minified)
+ * @param  {STYLESHEETAST} input  A CSS Abstract Syntax Tree (AST)
+ * @return {string}               Valid CSS (not minified)
  */
 function cssStringify (input) {
   if (
