@@ -89,6 +89,7 @@ function unicodeEncoding (character) {
   if (code < 33 || code > 126) {
     return constants.PREFIX.SYMBOL + 'U' + code;
   }
+  return;
 }
 
 // TODO: Eventually this should be an option user's can provide.

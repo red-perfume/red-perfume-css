@@ -48,7 +48,7 @@ function recursivelyRemovePosition (rule) {
  * @param  {OPTIONS}       options      User's options
  * @param  {string}        input        The CSS string to be atomized
  * @param  {string[]}      styleErrors  Array of style related errors
- * @return {STYLESHEETAST}              A parsed CSS AST
+ * @return {STYLESHEETAST}              A parsed CSS AST or undefined if no input provided
  */
 const cssParser = function (options, input, styleErrors) {
   styleErrors = styleErrors || [];
@@ -56,7 +56,7 @@ const cssParser = function (options, input, styleErrors) {
     const message = 'Invalid CSS input.';
     styleErrors.push(message);
     helpers.throwError(options, message);
-    return;
+    return undefined;
   }
 
   const parseOptions = {

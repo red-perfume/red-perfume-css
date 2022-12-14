@@ -1,4 +1,9 @@
 /**
+ * @file    Type definitions for the API and reusable functions/objects
+ * @author  TheJaredWilcurt
+ */
+
+/**
  * OPTIONAL: console.error is called by default if verbose: true.
  *
  * Your own custom logging function called with helpful warning/error
@@ -20,19 +25,19 @@
 
 /**
  * @typedef  {object} CLASSMAP
- * @property {object.<string, string[]>} classMapEntry  The key is the original classname, the value is an array of strings of atomized classes
+ * @property {Object<string, string[]>} classMapEntry  The key is the original classname, the value is an array of strings of atomized classes
  */
 
 /**
  * @typedef  {object}  SELECTORCHUNK
- * @property {string}  type           The type of selector ('tag', 'attribute', 'pseudo')
- * @property {string}  name           Selector name ('class', 'hover')
- * @property {string}  [action]       Action ('element')
- * @property {string}  [value]        Actual selector value ('cow')
- * @property {boolean} [ignoreCase]   If casing should be ignored (false)
- * @property {string}  [namespace]    Not sure what this is (null)
- * @property {string}  [data]         Not sure what this is (null)
- * @property {string}  [original]     The original value for this selector ('.cow')
+ * @property {string}  type          The type of selector ('tag', 'attribute', 'pseudo')
+ * @property {string}  name          Selector name ('class', 'hover')
+ * @property {string}  [action]      Action ('element')
+ * @property {string}  [value]       Actual selector value ('cow')
+ * @property {boolean} [ignoreCase]  If casing should be ignored (false)
+ * @property {string}  [namespace]   Not sure what this is (null)
+ * @property {string}  [data]        Not sure what this is (null)
+ * @property {string}  [original]    The original value for this selector ('.cow')
  */
 
 /**
@@ -70,14 +75,14 @@
 
 /**
  * @typedef  {object}     STYLESHEETAST
- * @property {string}     type           The type of the AST ('stylesheet')
- * @property {STYLESHEET} stylesheet     Object containing the Rules AST
+ * @property {string}     type        The type of the AST ('stylesheet')
+ * @property {STYLESHEET} stylesheet  Object containing the Rules AST
  */
 
 /**
  * @typedef  {object} UGLIFYRESULT
- * @property {string} name          An uglified class name ('.rp__b5z2')
- * @property {number} index         The index number used (520958)
+ * @property {string} name   An uglified class name ('.rp__b5z2')
+ * @property {number} index  The index number used (520958)
  */
 
 /**
