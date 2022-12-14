@@ -93,17 +93,25 @@ function updateClassMap (classMap, selectors, encodedClassName) {
  * Ensure that non-classes are not atomized,
  * but still included in the output.
  *
- * @param  {object} rule  Parsed CSS Rule
- * @return {object}       New CSS rule as AST, newRule
+ * @param {object} rule      Parsed CSS Rule
+ * @param {object} newRules  Object containing all unique rules
  */
-function handleNonClasses (rule) {
+function handleNonClasses (rule, newRules) {
   let originalSelectorName = rule.selectors[0][0].original;
-  const newRule = {
+  newRules[originalSelectorName] = {
     type: 'rule',
-    selectors: [[{ original: originalSelectorName }]],
+    selectors: [[originalSelectorName]],
     declarations: rule.declarations
   };
-  return newRule;
+}
+
+function handleQualifyingElements (rule, newRules) {
+  let originalSelectorName = rule.selectors[0][0].original;
+  newRules[originalSelectorName] = {
+    type: 'rule',
+    selectors: [[originalSelectorName]],
+    declarations: rule.declarations
+  };
 }
 
 /**
@@ -139,7 +147,7 @@ function encodeDeclarationAsClassname (options, rule, declaration, classMap, new
     }
   }
 
-  if (ruleSelectors[0][1] && ruleSelectors[0][1].type && ruleSelectors[0][1].type === 'pseudo') {
+  if (ruleSelectors[0][1]?.type === 'pseudo') {
     let pseudoName = ruleSelectors[0][1].name;
     // .rp__display__--COLONblock___-HOVER:hover
     let pseudoClassName = encodedClassName + '___-' + pseudoName.toUpperCase() + ':' + pseudoName;
@@ -250,7 +258,10 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
     // TODO: I think this needs improved
     let type = rule.selectors[0][0].type;
     let name = rule.selectors[0][0].name;
-    if (type === 'tag' || (type === 'attribute' && name !== 'class')) {
+    console.log(rule.selectors);
+    if (type === 'tag' && rule.selectors[0][1].name === 'class') {
+      handleQualifyingElements(rule, newRules);
+    } else if (type === 'tag' || (type === 'attribute' && name !== 'class')) {
       handleNonClasses(rule, newRules);
     } else {
       /* A declaration looks like:
