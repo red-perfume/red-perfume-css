@@ -438,7 +438,7 @@ describe('Atomize', () => {
         }
       `;
 
-      test('Normal', () => {
+      test('ttNormal', () => {
         options = validator.validateOptions({
           ...options,
           input,

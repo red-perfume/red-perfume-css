@@ -123,13 +123,30 @@ function handleNonClasses (rule, newRules) {
   };
 }
 
-function handleQualifyingElements (rule, newRules) {
-  let originalSelectorName = rule.selectors[0][0].original;
-  newRules[originalSelectorName] = {
-    type: 'rule',
-    selectors: [[originalSelectorName]],
-    declarations: rule.declarations
-  };
+/**
+ * Handle classes attached to tags (qualifying elements).
+ * Such as `h1.example`.
+ *
+ * @param {OPTIONS}  options      User's options
+ * @param {RULE}     rule         Parsed CSS Rule
+ * @param {RULE}     newRules     Object containing all unique rules
+ * @param {string[]} styleErrors  Array of style related errors
+ */
+function handleQualifyingElements (options, rule, newRules, styleErrors) {
+  const originalSelectorName = rule.selectors[0][0].original;
+  const tagName = rule.selectors[0][0].name;
+  console.log({ rule });
+
+  rule.declarations.forEach(function (declaration) {
+    // An encoded class name looks like `.rp__padding__--COLON10px`
+    let encodedClassName = encodeClassName(options, declaration, styleErrors);
+
+    newRules[originalSelectorName] = {
+      type: 'rule',
+      selectors: [[tagName + encodedClassName]],
+      declarations: rule.declarations
+    };
+  });
 }
 
 /**
@@ -285,7 +302,7 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
       let name = rule.selectors[0][0].name;
       console.log(rule.selectors);
       if (type === 'tag' && rule.selectors[0][1].name === 'class') {
-        handleQualifyingElements(rule, newRules);
+        handleQualifyingElements(options, rule, newRules, styleErrors);
       } else if (type === 'tag' || (type === 'attribute' && name !== 'class')) {
         handleNonClasses(rule, newRules);
       } else {
