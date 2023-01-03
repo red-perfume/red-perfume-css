@@ -135,11 +135,13 @@ function handleNonClasses (rule, newRules) {
 function handleQualifyingElements (options, rule, newRules, styleErrors) {
   const originalSelectorName = rule.selectors[0][0].original;
   const tagName = rule.selectors[0][0].name;
-  console.log({ rule });
+  console.log({ rule: JSON.stringify(rule, null, 2) });
+
+  const selector = rule.selectors[0];
 
   rule.declarations.forEach(function (declaration) {
     // An encoded class name looks like `.rp__padding__--COLON10px`
-    let encodedClassName = encodeClassName(options, declaration, styleErrors);
+    let encodedClassName = encodeClassName(options, selector, declaration, styleErrors);
 
     newRules[originalSelectorName] = {
       type: 'rule',
@@ -168,13 +170,14 @@ function encodeDeclarationAsClassname (options, rule, declaration, classMap, new
   const isClass = ruleSelectors[0].find(function (selector) {
     return selector.name === 'class';
   });
+  const selector = rule.selectors[0];
   let encodedClassName = '';
   let encodedName = '';
   if (!isClass) {
     encodedName = ruleSelectors[0][0].original;
   } else {
     // An encoded class name looks like `.rp__padding__--COLON10px`
-    encodedClassName = encodeClassName(options, declaration, styleErrors);
+    encodedClassName = encodeClassName(options, selector, declaration, styleErrors);
     if (type === 'tag') {
       encodedName = name + encodedClassName;
     }
@@ -297,10 +300,11 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
      * @param {RULE} rule  AST of a CSS Rule
      */
     function (rule) {
+      console.log({ rule });
       // TODO: I think this needs improved
       let type = rule.selectors[0][0].type;
       let name = rule.selectors[0][0].name;
-      console.log(rule.selectors);
+      // console.log(rule.selectors);
       if (type === 'tag' && rule.selectors[0][1].name === 'class') {
         handleQualifyingElements(options, rule, newRules, styleErrors);
       } else if (type === 'tag' || (type === 'attribute' && name !== 'class')) {
