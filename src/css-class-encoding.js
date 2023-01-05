@@ -96,6 +96,24 @@ function unicodeEncoding (character) {
 const prefix = 'rp__';
 
 /**
+ * Takes in any string and encodes it to a new string.
+ *
+ * @param  {string} str  Input string ('rp__padding:2px')
+ * @return {string}      Output string ('rp__padding__--COLON2px')
+ */
+function encodeString (str) {
+  const arr = str.split('');
+  const encoded = arr.map(function (character) {
+    return (
+      propertyValueEncodingMap[character] ||
+      unicodeEncoding(character) ||
+      character
+    );
+  });
+  return encoded.join('');
+}
+
+/**
  * Encodes property/value pairs as valid, decodable classnames.
  *
  * @example
@@ -114,15 +132,8 @@ function encodeClassName (options, declaration, styleErrors) {
   }
   declaration = declaration || {};
   let newName = declaration.property + ':' + declaration.value;
-  let nameArray = newName.split('');
-  let encoded = nameArray.map(function (character) {
-    return (
-      propertyValueEncodingMap[character] ||
-      unicodeEncoding(character) ||
-      character
-    );
-  });
-  return '.' + prefix + encoded.join('');
+  let encoded = encodeString(newName);
+  return '.' + prefix + encoded;
 }
 
 // This is exported out too for a unit test
