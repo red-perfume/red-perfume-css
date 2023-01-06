@@ -18,7 +18,8 @@
   ],
   "dependencies": {
     "css": "^3.0.0",
-    "css-what": "^6.1.0"
+    "css-what": "^6.1.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

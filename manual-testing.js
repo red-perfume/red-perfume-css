@@ -8,16 +8,26 @@
 const redPerfumeCss = require('./index.js');
 
 const input = `
-  .cow,
-  .cat {
-      font-size: 12px;
-      padding: 8px;
-  }
-  .dog {
-      font-size: 12px;
-      background: #F00;
-      padding: 8px;
-  }
+.moo .bark {
+    margin: 4px;
+    display: block;
+}
+.dog .woof {
+    margin: 4px;
+    color: #555555;
+}
+.vehicle .car .horn {
+    margin: 4px;
+}
+.vehicle {
+    margin: 4px;
+}
+.test.test2 {
+  margin: 2px;
+}
+.test, .test2 {
+  margin: 2px;
+}
 `;
 
 const results = redPerfumeCss({
@@ -25,5 +35,6 @@ const results = redPerfumeCss({
   input
 });
 
+debugger;
 console.log(input);
 console.log(results);

@@ -22,6 +22,9 @@ const cssParser = require('./css-parser.js');
 const cssStringify = require('./css-stringify.js');
 const cssUglifier = require('./css-uglifier.js');
 const helpers = require('./helpers.js');
+const css = require("css");
+const _ = require('lodash');
+const selectorParse = require('css-what').parse;
 
 /**
  * Remove property/value pairs that are duplicates.
@@ -96,6 +99,7 @@ function updateClassMap (classMap, selectors, encodedClassName) {
      * @param {SELECTOR} selector  Array of selector chunks
      */
     function (selector) {
+      debugger;
       let originalSelectorName = selector[0].original;
       // '.cow:hover' => '.cow'
       originalSelectorName = originalSelectorName.split(':')[0];
@@ -129,21 +133,22 @@ function handleNonClasses (rule, newRules) {
  * newRules.
  *
  * @param {OPTIONS}     options      User's options
- * @param {RULE}        rule         A CSS Rule as AST including selectors
+ * @param {RULE}        rule         A CSS Rule as AST
+ * @param {RULE}        rule         The parsed selectors for the included rule
  * @param {DECLARATION} declaration  A single CSS property/value pair as AST
  * @param {CLASSMAP}    classMap     Map of original CSS selectors to encoded class names
  * @param {RULE}        newRules     The atomized CSS as AST
  * @param {string[]}    styleErrors  Array of style related errors
  */
-function encodeDeclarationAsClassname (options, rule, declaration, classMap, newRules, styleErrors) {
+function encodeDeclarationAsClassname (options, rule, parsedSelectors, declaration,classMap, newRules, styleErrors) {
   // An encoded class name looks like `.rp__padding__--COLON10px`
   let encodedClassName = encodeClassName(options, declaration, styleErrors);
 
   // Array of comma separated selectors on a specific rule
-  const ruleSelectors = rule.selectors;
+  // const ruleSelectors = rule.selectors;
 
   // Each selector is made up of parts like .cow.dog:hover:after would be an array of 4 objects for each part
-  ruleSelectors.forEach(function (selectorParts) {
+  parsedSelectors.forEach(function (selectorParts) {
     let encodedPseudoNames = [];
     let pseudoNames = [];
     selectorParts.forEach(function (selectorPart) {
@@ -156,11 +161,20 @@ function encodeDeclarationAsClassname (options, rule, declaration, classMap, new
     // .rp__display__--COLONblock___-HOVER___-AFTER:hover:after
     encodedClassName = encodedClassName + encodedPseudoNames.join('') + pseudoNames.join('');
 
-    classMap = updateClassMap(classMap, rule.selectors, encodedClassName);
+    classMap = updateClassMap(classMap, parsedSelectors, encodedClassName);
+
+    // debugger;
 
     newRules[encodedClassName] = {
       type: 'rule',
-      selectors: [[encodedClassName]],
+      selectors: [[...selectorParts, {
+        type: 'attribute',
+        name: 'class',
+        action: 'element',
+        value: encodedClassName,
+        namespace: null,
+        ignoreCase: 'quirks'
+      }]],
       declarations: [declaration]
     };
   });
@@ -252,9 +266,13 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
      * @param {RULE} rule  AST of a CSS Rule
      */
     function (rule) {
+      const parsedSelectors = selectorParse(rule.selectors);
+
       // TODO: I think this needs improved
-      let type = rule.selectors[0][0].type;
-      let name = rule.selectors[0][0].name;
+      const firstSelectorGroup = parsedSelectors[0];
+      const firstSelectorGroupLastElement = firstSelectorGroup[firstSelectorGroup.length - 1];
+      const type = firstSelectorGroupLastElement.type;
+      const name = firstSelectorGroupLastElement.name;
       if (type === 'tag' || (type === 'attribute' && name !== 'class')) {
         handleNonClasses(rule, newRules);
       } else {
@@ -273,12 +291,13 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
            * @param {DECLARATION} declaration  A property/value pair.
            */
           function (declaration) {
-            encodeDeclarationAsClassname(options, rule, declaration, classMap, newRules, styleErrors);
+            encodeDeclarationAsClassname(options, rule, parsedSelectors, declaration, classMap, newRules, styleErrors);
           }
         );
       }
     }
   );
+  debugger;
 }
 
 /**
@@ -312,25 +331,37 @@ const atomize = function (options) {
   }
 
   let classMap = {};
-  const newRules = {};
+  // const newRules = {};
+  const newAST = _.cloneDeep(parsed);
 
-  processRules(options, parsed.stylesheet.rules, classMap, newRules, styleErrors);
+  // debugger;
+  // processRules(options, parsed.stylesheet.rules, classMap, newRules, styleErrors);
+  processRules(options, parsed.stylesheet.rules, classMap, newAST.stylesheet.rules, styleErrors);
   removeIdenticalProperties(classMap);
 
   if (uglify) {
-    uglifyClassNames(classMap, newRules);
+    uglifyClassNames(classMap, newAST.stylesheet.rules);
   }
 
-  const output = {
-    type: 'stylesheet',
-    stylesheet: {
-      rules: [],
-      parsingErrors: []
-    }
-  };
-  Object.keys(newRules).forEach(function (key) {
-    output.stylesheet.rules.push(newRules[key]);
-  });
+  // const output = {
+  //   type: 'stylesheet',
+  //   stylesheet: {
+  //     rules: [],
+  //     parsingErrors: []
+  //   }
+  // };
+  // Object.keys(newRules).forEach(function (key) {
+  //   output.stylesheet.rules.push(newRules[key]);
+  // });
+
+  // debugger;
+  // const output = {
+  //   type: 'stylesheet',
+  //   stylesheet: {
+  //     rules: Object.values(newRules),
+  //     parsingErrors: []
+  //   }
+  // };
 
   return {
     // classMap: { '.cow': [ '.rp__0', '.rp__1' ], '.moo': [ '.rp__2', '.rp__1' ] }
@@ -340,7 +371,8 @@ const atomize = function (options) {
       '.rp__1 { border: none; }' +
       '.rp__2 { padding: 10px; }'
     */
-    atomizedCss: cssStringify(output),
+    atomizedCss: css.stringify(newAST),
+    // atomizedCss: cssStringify(output),
     styleErrors: options.styleErrors
   };
 };
