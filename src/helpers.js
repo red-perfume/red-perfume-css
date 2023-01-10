@@ -8,6 +8,25 @@
 const { OPTIONS } = require('../api-type-definitions.js');
 
 const helpers = {
+  // TODO AFD: JSDOC
+  /**
+   *
+   * @param stringArray
+   * @param characterPrefix
+   */
+  joinStringArrayWithCharacterPrefix: function joinStringArrayWithCharacterPrefix (stringArray, characterPrefix) {
+    if (stringArray.length <= 0) {
+      return '';
+    }
+    if (characterPrefix != null) {
+      return stringArray.map(
+        function (element) {
+          return `${characterPrefix}${element}`;
+        }
+      ).join('');
+    }
+    return stringArray.join('');
+  },
   /**
    * Takes a string and replaces spaces with returns if
    * they are the last space on a console line (108 chars).

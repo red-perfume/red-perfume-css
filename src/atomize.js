@@ -5,6 +5,10 @@
  * @author  TheJaredWilcurt
  */
 
+const css = require('css');
+const cssWhat = require('css-what');
+const _ = require('lodash');
+
 const {
   CLASSMAP,
   DECLARATION,
@@ -22,9 +26,7 @@ const cssParser = require('./css-parser.js');
 const cssStringify = require('./css-stringify.js');
 const cssUglifier = require('./css-uglifier.js');
 const helpers = require('./helpers.js');
-const css = require("css");
-const _ = require('lodash');
-const selectorParse = require('css-what').parse;
+
 
 /**
  * Remove property/value pairs that are duplicates.
@@ -53,6 +55,7 @@ function removeIdenticalProperties (classMap) {
  * @return {CLASSMAP}                    Returns the classMap object
  */
 function updateClassMap (classMap, selectors, encodedClassName) {
+  debugger;
   /*
     An array of selectors for
     .cat:hover, .bat:hover { margin: 2px; }
@@ -132,52 +135,144 @@ function handleNonClasses (rule, newRules) {
  * Handles psuedo selectors too, like :hover. Mutates the classMap and
  * newRules.
  *
- * @param {OPTIONS}     options      User's options
- * @param {RULE}        rule         A CSS Rule as AST
- * @param {RULE}        rule         The parsed selectors for the included rule
- * @param {DECLARATION} declaration  A single CSS property/value pair as AST
- * @param {CLASSMAP}    classMap     Map of original CSS selectors to encoded class names
- * @param {RULE}        newRules     The atomized CSS as AST
- * @param {string[]}    styleErrors  Array of style related errors
+ * @param {OPTIONS}         options          User's options
+ * @param {RULE}            rule             A CSS Rule as AST
+ * @param {parsedSelectors} parsedSelectors  The parsed selectors for the included rule
+ * @param {DECLARATION}     declaration      A single CSS property/value pair as AST
+ * @param {CLASSMAP}        classMap         Map of original CSS selectors to encoded class names
+ * @param {RULE[]}          newRules         The atomized CSS as AST
+ * @param {string[]}        styleErrors      Array of style related errors
  */
-function encodeDeclarationAsClassname (options, rule, parsedSelectors, declaration,classMap, newRules, styleErrors) {
+function encodeDeclarationAsClassname (options, rule, parsedSelectors, declaration, classMap, newRules, styleErrors) {
   // An encoded class name looks like `.rp__padding__--COLON10px`
-  let encodedClassName = encodeClassName(options, declaration, styleErrors);
+  // let encodedClassName = encodeClassName(options, declaration, styleErrors);
 
   // Array of comma separated selectors on a specific rule
   // const ruleSelectors = rule.selectors;
 
+  const fullSelector = generateFullSelector(parsedSelectors[0], declaration, options, styleErrors);
+
   // Each selector is made up of parts like .cow.dog:hover:after would be an array of 4 objects for each part
-  parsedSelectors.forEach(function (selectorParts) {
-    let encodedPseudoNames = [];
-    let pseudoNames = [];
-    selectorParts.forEach(function (selectorPart) {
-      if (selectorPart.type && selectorPart.type === 'pseudo') {
-        let pseudoName = selectorPart.name;
-        encodedPseudoNames.push(constants.PREFIX.PSUEDO + pseudoName.toUpperCase());
-        pseudoNames.push(':' + pseudoName);
-      }
-    });
-    // .rp__display__--COLONblock___-HOVER___-AFTER:hover:after
-    encodedClassName = encodedClassName + encodedPseudoNames.join('') + pseudoNames.join('');
+  // parsedSelectors.forEach(function (selectorParts) {
+  //   let encodedPseudoNames = [];
+  //   let pseudoNames = [];
+  //   selectorParts.forEach(function (selectorPart) {
+  //     if (selectorPart.type && selectorPart.type === 'pseudo') {
+  //       let pseudoName = selectorPart.name;
+  //       encodedPseudoNames.push(constants.PREFIX.PSUEDO + pseudoName.toUpperCase());
+  //       pseudoNames.push(':' + pseudoName);
+  //     }
+  //   });
 
-    classMap = updateClassMap(classMap, parsedSelectors, encodedClassName);
+  // .rp__display__--COLONblock___-HOVER___-AFTER:hover:after
+  // encodedClassName = encodedClassName + encodedPseudoNames.join('') + pseudoNames.join('');
 
-    // debugger;
+  // classMap = updateClassMap(classMap, parsedSelectors, encodedClassName);
+  // const newSelectors = `${cssWhat.stringify([selectorParts.slice(0, -1)])}${encodedClassName}`;
 
-    newRules[encodedClassName] = {
-      type: 'rule',
-      selectors: [[...selectorParts, {
-        type: 'attribute',
-        name: 'class',
-        action: 'element',
-        value: encodedClassName,
-        namespace: null,
-        ignoreCase: 'quirks'
-      }]],
-      declarations: [declaration]
-    };
+  newRules.push({
+    type: 'rule',
+    selectors: [fullSelector],
+    declarations: [declaration]
   });
+  // });
+}
+
+// TODO AFD: jsdoc stuff
+/**
+ *
+ *
+ * @param  {parsedSelectorsOriginal} parsedSelectorsOriginal  The parsed selectors for the included rule
+ * @param  {DECLARATION}             declaration              A single CSS property/value pair as AST
+ * @param  {OPTIONS}                 options                  User's options
+ * @param  {string[]}                styleErrors              Array of style related errors
+ *
+ * @return {string}
+ */
+function generateFullSelector (parsedSelectorsOriginal, declaration, options, styleErrors) {
+  // Short circuit if nothing exists in the obj
+  if (parsedSelectorsOriginal.length === 0) {
+    return '';
+  }
+
+  // Utility functions
+  const parsedSelectors = _.cloneDeep(parsedSelectorsOriginal);
+  const selectorGroupTemplate = {
+    pseudoNames: [],
+    classes: [],
+    tags: [],
+    ids: []
+  };
+  function createNewSelectorGroup () {selectorGroups.push(_.cloneDeep(selectorGroupTemplate)); };
+  function currentSelectorGroup () { return selectorGroups[selectorGroups.length - 1]; };
+
+  // initialize selector groups
+  const selectorGroups = [];
+  createNewSelectorGroup();
+
+  // process selectors into groups
+  while (parsedSelectors.length > 0) {
+    const currentElement = parsedSelectors.shift();
+
+    switch (currentElement.type) {
+      case 'pseudo':
+        currentSelectorGroup().pseudoNames.push(currentElement.name);
+        break;
+      case 'attribute':
+        if (currentElement.name === 'class') {
+          currentSelectorGroup().classes.push(currentElement.value);
+        } else if (currentElement.name === 'id') {
+          currentSelectorGroup().ids.push(currentElement.value);
+        }
+        break;
+      case 'tag':
+        currentSelectorGroup().tags.push(currentElement.name);
+        break;
+      case 'descendant':
+        createNewSelectorGroup();
+        break;
+    }
+  }
+
+  // give absolute order to individual selectors in a selector type in a group
+  orderSelectorGroups(selectorGroups);
+
+  // generate full new selector
+  let parentSelectors = '';
+  const lastSelectorGroup = selectorGroups.pop();
+  if (selectorGroups.length > 0) {
+    parentSelectors += selectorGroups.reduce(function (accumulator, currentValue) {
+      return (
+        accumulator +
+        helpers.joinStringArrayWithCharacterPrefix(currentValue.tags) +
+        helpers.joinStringArrayWithCharacterPrefix(currentValue.ids, '#') +
+        helpers.joinStringArrayWithCharacterPrefix(currentValue.classes, '.') +
+        helpers.joinStringArrayWithCharacterPrefix(currentValue.pseudoNames, ':') +
+        ' '
+      );
+    }, '');
+  }
+
+  const encodedClassName = encodeClassName(options, lastSelectorGroup, declaration, styleErrors).repeat(lastSelectorGroup.classes.length || 1);
+
+  return parentSelectors + helpers.joinStringArrayWithCharacterPrefix(lastSelectorGroup.tags) + encodedClassName + helpers.joinStringArrayWithCharacterPrefix(lastSelectorGroup.pseudoNames, ':');
+}
+
+// TODO AFD: jsdoc stuff
+/**
+ *
+ * @param selectorGroups
+ */
+function orderSelectorGroups (selectorGroups) {
+  return selectorGroups.forEach(
+    function (selectorGroup) {
+      Object.values(selectorGroup).forEach(
+        function (selectorType) {
+          selectorType.sort((a, b) => a.localeCompare(b));
+        }
+      );
+    }
+  );
 }
 
 /**
@@ -266,7 +361,7 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
      * @param {RULE} rule  AST of a CSS Rule
      */
     function (rule) {
-      const parsedSelectors = selectorParse(rule.selectors);
+      const parsedSelectors = cssWhat.parse(rule.selectors);
 
       // TODO: I think this needs improved
       const firstSelectorGroup = parsedSelectors[0];
@@ -297,7 +392,6 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
       }
     }
   );
-  debugger;
 }
 
 /**
@@ -333,6 +427,7 @@ const atomize = function (options) {
   let classMap = {};
   // const newRules = {};
   const newAST = _.cloneDeep(parsed);
+  newAST.stylesheet.rules = [];
 
   // debugger;
   // processRules(options, parsed.stylesheet.rules, classMap, newRules, styleErrors);

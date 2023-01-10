@@ -64,7 +64,6 @@ const cssParser = function (options, input, styleErrors) {
     source: undefined
   };
   const parsed = css.parse(input, parseOptions);
-  // debugger;
   /*
     input = '.test { color: #F00 }';
     parsed = {

@@ -119,21 +119,26 @@ function encodeString (str) {
  * @example
  * let encodedClassName = encodeClassName(options, declaration);
  *
- * @param  {OPTIONS}     options      User's passed in options, containing verbose/customLoger
- * @param  {DECLARATION} declaration  Contains the Property and Value strings
- * @param  {string[]}    styleErrors  Array of strings for all style related errors
- * @return {string}                   A classname starting with . and a prefix
+ * @param   {OPTIONS}     options      User's passed in options, containing verbose/customLoger
+ * @param   {SELECTORS}   selectors    Contains the Property and Value strings
+ * @param   {DECLARATION} declaration  Contains the Property and Value strings
+ * @param   {string[]}    styleErrors  Array of strings for all style related errors
+ * @returns {string}                   A classname starting with . and a prefix
  */
-function encodeClassName (options, declaration, styleErrors) {
-  styleErrors = styleErrors || [];
+function encodeClassName (options, selectors, declaration, styleErrors) {
+  styleErrors = styleErrors || [s];
   if (!declaration || declaration.property === undefined || declaration.value === undefined) {
     styleErrors.push(constants.IMPRESSED_MESSAGE);
     helpers.throwError(options, constants.IMPRESSED_MESSAGE);
   }
   declaration = declaration || {};
+  const tagSection = helpers.joinStringArrayWithCharacterPrefix(selectors.tags.map(function (element) {return encodeString(element);}), constants.PREFIX.TAG);
+  const idSection = helpers.joinStringArrayWithCharacterPrefix(selectors.ids.map(function (element) {return encodeString(element);}), constants.PREFIX.ID);
+  const classSection = helpers.joinStringArrayWithCharacterPrefix(selectors.classes.map(function (element) {return encodeString(element);}), constants.PREFIX.CLASS) ;
+  const pseudoSection = helpers.joinStringArrayWithCharacterPrefix(selectors.pseudoNames.map(function (element) {return encodeString(element);}), constants.PREFIX.PSUEDO);
   let newName = declaration.property + ':' + declaration.value;
   let encoded = encodeString(newName);
-  return '.' + prefix + encoded;
+  return '.' + prefix + tagSection + idSection + classSection + pseudoSection + encoded;
 }
 
 // This is exported out too for a unit test

@@ -8,25 +8,16 @@
 const redPerfumeCss = require('./index.js');
 
 const input = `
-.moo .bark {
+.cow #thing#test p .moo.type:hover:focus :hover {
     margin: 4px;
-    display: block;
+}.cow #thing#test p :hover p.moo.type:hover:focus {
+    margin: 4px;
 }
 .dog .woof {
     margin: 4px;
-    color: #555555;
 }
 .vehicle .car .horn {
     margin: 4px;
-}
-.vehicle {
-    margin: 4px;
-}
-.test.test2 {
-  margin: 2px;
-}
-.test, .test2 {
-  margin: 2px;
 }
 `;
 

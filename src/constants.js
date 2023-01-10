@@ -17,6 +17,9 @@ const IMPRESSED_MESSAGE = 'A rule declaration was missing details, ' +
 
 const PREFIX = Object.freeze({
   PSUEDO: '___-',
+  TAG: '__---TAG_',
+  ID: '__---ID_',
+  CLASS: '__---CLASS_',
   SPACE: '_____-',
   SYMBOL: '__--'
 });
