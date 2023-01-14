@@ -361,9 +361,27 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
      * @param {RULE} rule  AST of a CSS Rule
      */
     function (rule) {
+      const unhandledTypes = [
+        'charset',
+        'comment',
+        'font-face',
+        'import',
+        'keyframes',
+        'media',
+        'supports'
+      ];
+      if (unhandledTypes.includes(rule.type)) {
+        // The above types do not have a rule.selectors
+        // So cssWhat throws an error about undefined.length
+        // We'll need to actually handle all of these cases in future PRs
+        return;
+      }
+      if (!rule.selectors) {
+        throw rule.type + ' should be added to unhandledTypes';
+      }
+
       const parsedSelectors = cssWhat.parse(rule.selectors);
 
-      // TODO: I think this needs improved
       const firstSelectorGroup = parsedSelectors[0];
       const firstSelectorGroupLastElement = firstSelectorGroup[firstSelectorGroup.length - 1];
       const type = firstSelectorGroupLastElement.type;
