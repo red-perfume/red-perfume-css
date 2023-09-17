@@ -7,7 +7,8 @@
 
 const {
   DECLARATION,
-  OPTIONS
+  OPTIONS,
+  SELECTOR
 } = require('../api-type-definitions.js');
 
 const constants = require('./constants.js');
@@ -119,20 +120,21 @@ function encodeString (str) {
  * @example
  * let encodedClassName = encodeClassName(options, declaration);
  *
- * @param  {OPTIONS}     options      User's passed in options, containing verbose/customLoger
- * @param  {DECLARATION} declaration  Contains the Property and Value strings
- * @param  {string[]}    styleErrors  Array of strings for all style related errors
- * @return {string}                   A classname starting with . and a prefix
+ * @param  {OPTIONS}     options           User's passed in options, containing verbose/customLoger
+ * @param  {string}      originalSelector  The CSS selector to be encoded for nested/qualifying selectors
+ * @param  {DECLARATION} declaration       Contains the Property and Value strings
+ * @param  {string[]}    styleErrors       Array of strings for all style related errors
+ * @return {string}                        A classname starting with . and a prefix
  */
-function encodeClassName (options, declaration, styleErrors) {
+function encodeClassName (options, originalSelector, declaration, styleErrors) {
   styleErrors = styleErrors || [];
   if (!declaration || declaration.property === undefined || declaration.value === undefined) {
     styleErrors.push(constants.IMPRESSED_MESSAGE);
     helpers.throwError(options, constants.IMPRESSED_MESSAGE);
   }
   declaration = declaration || {};
-  let newName = declaration.property + ':' + declaration.value;
-  let encoded = encodeString(newName);
+  const newName = declaration.property + ':' + declaration.value;
+  const encoded = encodeString(newName);
   return '.' + prefix + encoded;
 }
 

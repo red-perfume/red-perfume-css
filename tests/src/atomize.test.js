@@ -429,5 +429,68 @@ describe('Atomize', () => {
           .not.toHaveBeenCalled();
       });
     });
+
+    describe('Handle qualifying elements', () => {
+      const input = `
+        h1.example {
+          display: block;
+          text-align: center;
+        }
+      `;
+
+      test('ttNormal', () => {
+        options = validator.validateOptions({
+          ...options,
+          input,
+          uglify: false
+        });
+
+        expect(atomize(options))
+          .toEqual({
+            atomizedCss: testHelpers.trimIndentation(`
+              h1.rp__display__--COLONblock {
+                display: block;
+              }
+              h1.rp__text-align__--COLONcenter {
+                text-align: center;
+              }
+            `, 14),
+            classMap: {
+              'h1.example': [
+                'rp__display__--COLONblock',
+                'rp__text-align__--COLONcenter'
+              ]
+            },
+            styleErrors: []
+          });
+      });
+
+      test('Uglified', () => {
+        options = validator.validateOptions({
+          ...options,
+          input,
+          uglify: true
+        });
+
+        expect(atomize(options))
+          .toEqual({
+            atomizedCss: testHelpers.trimIndentation(`
+              h1.rp__0 {
+                display: block;
+              }
+              h1.rp__1 {
+                text-align: center;
+              }
+            `, 14),
+            classMap: {
+              'h1.example': [
+                'rp__0',
+                'rp__1'
+              ]
+            },
+            styleErrors: []
+          });
+      });
+    });
   });
 });

@@ -8,15 +8,9 @@
 const redPerfumeCss = require('./index.js');
 
 const input = `
-  .cow,
-  .cat {
-      font-size: 12px;
-      padding: 8px;
-  }
-  .dog {
-      font-size: 12px;
-      background: #F00;
-      padding: 8px;
+  h1.example {
+    display: block;
+    text-align: center;
   }
 `;
 

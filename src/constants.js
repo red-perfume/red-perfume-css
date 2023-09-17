@@ -16,6 +16,9 @@ const IMPRESSED_MESSAGE = 'A rule declaration was missing details, ' +
   'this error, I\'m kind of impressed.';
 
 const PREFIX = Object.freeze({
+  CLASS: '__---CLASS',
+  TAG: '__---TAG',
+  ID: '__---ID',
   PSUEDO: '___-',
   SPACE: '_____-',
   SYMBOL: '__--'

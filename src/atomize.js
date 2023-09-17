@@ -44,7 +44,7 @@ function removeIdenticalProperties (classMap) {
 /**
  * Updates the map of selectors to their atomized classes.
  *
- * @param  {CLASSMAP}  classMap          The class map object used by the HTML/JSON
+ * @param  {CLASSMAP}  classMap          The class map object used by the HTML/JSON, connects original to atomized class names
  * @param  {SELECTORS} selectors         Parsed CSS selectors
  * @param  {string}    encodedClassName  Encoded class name
  * @return {CLASSMAP}                    Returns the classMap object
@@ -124,6 +124,34 @@ function handleNonClasses (rule, newRules) {
 }
 
 /**
+ * Handle classes attached to tags (qualifying elements).
+ * Such as `h1.example`.
+ *
+ * @param {OPTIONS}  options      User's options
+ * @param {RULE}     rule         Parsed CSS Rule
+ * @param {RULE}     newRules     Object containing all unique rules
+ * @param {string[]} styleErrors  Array of style related errors
+ */
+function handleQualifyingElements (options, rule, newRules, styleErrors) {
+  const originalSelectorName = rule.selectors[0][0].original;
+  const tagName = rule.selectors[0][0].name;
+  console.log({ rule: JSON.stringify(rule, null, 2) });
+
+  const selector = rule.selectors[0];
+
+  rule.declarations.forEach(function (declaration) {
+    // An encoded class name looks like `.rp__padding__--COLON10px`
+    let encodedClassName = encodeClassName(options, selector, declaration, styleErrors);
+
+    newRules[originalSelectorName] = {
+      type: 'rule',
+      selectors: [[tagName + encodedClassName]],
+      declarations: rule.declarations
+    };
+  });
+}
+
+/**
  * Creates the encoded class name and pairs it with the original selector.
  * Handles psuedo selectors too, like :hover. Mutates the classMap and
  * newRules.
@@ -136,11 +164,31 @@ function handleNonClasses (rule, newRules) {
  * @param {string[]}    styleErrors  Array of style related errors
  */
 function encodeDeclarationAsClassname (options, rule, declaration, classMap, newRules, styleErrors) {
-  // An encoded class name looks like `.rp__padding__--COLON10px`
-  let encodedClassName = encodeClassName(options, declaration, styleErrors);
-
   // Array of comma separated selectors on a specific rule
   const ruleSelectors = rule.selectors;
+  const type = ruleSelectors[0][0].type;
+  const isClass = ruleSelectors[0].find(function (selector) {
+    return selector.name === 'class';
+  });
+  const selector = rule.selectors[0];
+  let encodedClassName = '';
+  let encodedName = '';
+  if (!isClass) {
+    encodedName = ruleSelectors[0][0].original;
+  } else {
+    // An encoded class name looks like `.rp__padding__--COLON10px`
+    encodedClassName = encodeClassName(options, selector, declaration, styleErrors);
+    if (type === 'tag') {
+      encodedName = name + encodedClassName;
+    }
+  }
+
+  if (ruleSelectors[0][1]?.type === 'pseudo') {
+    let pseudoName = ruleSelectors[0][1].name;
+    // .rp__display__--COLONblock___-HOVER:hover
+    let pseudoClassName = encodedClassName + '___-' + pseudoName.toUpperCase() + ':' + pseudoName;
+    encodedClassName = pseudoClassName;
+  }
 
   // Each selector is made up of parts like .cow.dog:hover:after would be an array of 4 objects for each part
   ruleSelectors.forEach(function (selectorParts) {
@@ -156,11 +204,11 @@ function encodeDeclarationAsClassname (options, rule, declaration, classMap, new
     // .rp__display__--COLONblock___-HOVER___-AFTER:hover:after
     encodedClassName = encodedClassName + encodedPseudoNames.join('') + pseudoNames.join('');
 
-    classMap = updateClassMap(classMap, rule.selectors, encodedClassName);
+    classMap = updateClassMap(classMap, ruleSelectors, encodedClassName);
 
     newRules[encodedClassName] = {
       type: 'rule',
-      selectors: [[encodedClassName]],
+      selectors: [[encodedName || encodedClassName]],
       declarations: [declaration]
     };
   });
@@ -252,10 +300,14 @@ function processRules (options, rules, classMap, newRules, styleErrors) {
      * @param {RULE} rule  AST of a CSS Rule
      */
     function (rule) {
+      console.log({ rule });
       // TODO: I think this needs improved
       let type = rule.selectors[0][0].type;
       let name = rule.selectors[0][0].name;
-      if (type === 'tag' || (type === 'attribute' && name !== 'class')) {
+      // console.log(rule.selectors);
+      if (type === 'tag' && rule.selectors[0][1].name === 'class') {
+        handleQualifyingElements(options, rule, newRules, styleErrors);
+      } else if (type === 'tag' || (type === 'attribute' && name !== 'class')) {
         handleNonClasses(rule, newRules);
       } else {
         rule.declarations.forEach(
