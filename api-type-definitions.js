@@ -25,7 +25,7 @@
 
 /**
  * @typedef  {object} CLASSMAP
- * @property {Object<string, string[]>} classMapEntry  The key is the original classname, the value is an array of strings of atomized classes
+ * @property {{[key: string]: string[]}} classMapEntry  The key is the original classname, the value is an array of strings of atomized classes
  */
 
 /**
