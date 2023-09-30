@@ -134,13 +134,13 @@ function handleNonClasses (rule, newRules) {
  * Handles psuedo selectors too, like :hover. Mutates the classMap and
  * newRules.
  *
- * @param {OPTIONS}         options          User's options
- * @param {RULE}            rule             A CSS Rule as AST
- * @param {parsedSelectors} parsedSelectors  The parsed selectors for the included rule
- * @param {DECLARATION}     declaration      A single CSS property/value pair as AST
- * @param {CLASSMAP}        classMap         Map of original CSS selectors to encoded class names
- * @param {RULE[]}          newRules         The atomized CSS as AST
- * @param {string[]}        styleErrors      Array of style related errors
+ * @param {OPTIONS}     options          User's options
+ * @param {RULE}        rule             A CSS Rule as AST
+ * @param {[type]}      parsedSelectors  The parsed selectors for the included rule
+ * @param {DECLARATION} declaration      A single CSS property/value pair as AST
+ * @param {CLASSMAP}    classMap         Map of original CSS selectors to encoded class names
+ * @param {RULE[]}      newRules         The atomized CSS as AST
+ * @param {string[]}    styleErrors      Array of style related errors
  */
 function encodeDeclarationAsClassname (options, rule, parsedSelectors, declaration, classMap, newRules, styleErrors) {
   // An encoded class name looks like `.rp__padding__--COLON10px`
