@@ -27,7 +27,6 @@ const cssStringify = require('./css-stringify.js');
 const cssUglifier = require('./css-uglifier.js');
 const helpers = require('./helpers.js');
 
-
 /**
  * Remove property/value pairs that are duplicates.
  * `display: none; display: none;` becomes `display:none;`
