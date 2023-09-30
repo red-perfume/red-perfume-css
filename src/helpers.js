@@ -8,22 +8,27 @@
 const { OPTIONS } = require('../api-type-definitions.js');
 
 const helpers = {
-  // TODO AFD: JSDOC
   /**
+   * Takes array of strings and prefixes each with a given value.
+   * Returns them joined on empty string.
    *
-   * @param stringArray
-   * @param characterPrefix
+   * @param  {string[]} stringArray      Array of strings representing a portion of a selector to be prefixed
+   * @param  {string}   characterPrefix  A prefix constant.
+   * @return {string}                    The prefixed strings joined together.
    */
-  joinStringArrayWithCharacterPrefix: function joinStringArrayWithCharacterPrefix (stringArray, characterPrefix) {
-    if (stringArray.length <= 0) {
+  joinStringArrayWithCharacterPrefix: function (stringArray, characterPrefix) {
+    if (
+      !Array.isArray(stringArray) ||
+      !stringArray.length
+    ) {
       return '';
     }
-    if (characterPrefix != null) {
-      return stringArray.map(
-        function (element) {
-          return `${characterPrefix}${element}`;
-        }
-      ).join('');
+    if (characterPrefix) {
+      return stringArray
+        .map(function (element) {
+          return characterPrefix + element;
+        })
+        .join('');
     }
     return stringArray.join('');
   },

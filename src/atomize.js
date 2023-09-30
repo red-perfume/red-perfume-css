@@ -20,10 +20,10 @@ const {
   UGLIFYRESULT
 } = require('../api-type-definitions.js');
 
-const constants = require('./constants.js');
+// const constants = require('./constants.js');
 const encodeClassName = require('./css-class-encoding.js');
 const cssParser = require('./css-parser.js');
-const cssStringify = require('./css-stringify.js');
+// const cssStringify = require('./css-stringify.js');
 const cssUglifier = require('./css-uglifier.js');
 const helpers = require('./helpers.js');
 
@@ -177,16 +177,55 @@ function encodeDeclarationAsClassname (options, rule, parsedSelectors, declarati
   // });
 }
 
-// TODO AFD: jsdoc stuff
 /**
+ * [createNewSelectorGroup description]
  *
+ * @param {[type]} selectorGroups         [description]
+ * @param {[type]} selectorGroupTemplate  [description]
+ */
+function createNewSelectorGroup (selectorGroups, selectorGroupTemplate) {
+  selectorGroups.push(_.cloneDeep(selectorGroupTemplate));
+}
+
+/**
+ * [processSelectorsIntoGroups description]
  *
- * @param  {parsedSelectorsOriginal} parsedSelectorsOriginal  The parsed selectors for the included rule
- * @param  {DECLARATION}             declaration              A single CSS property/value pair as AST
- * @param  {OPTIONS}                 options                  User's options
- * @param  {string[]}                styleErrors              Array of style related errors
+ * @param {[type]} selectorGroups         [description]
+ * @param {[type]} parsedSelectors        [description]
+ * @param {[type]} selectorGroupTemplate  [description]
+ */
+function processSelectorsIntoGroups (selectorGroups, parsedSelectors, selectorGroupTemplate) {
+  function currentSelectorGroup () {
+    return selectorGroups[selectorGroups.length - 1];
+  }
+
+  while (parsedSelectors.length > 0) {
+    const currentElement = parsedSelectors.shift();
+
+    if (currentElement.type === 'pseudo') {
+      currentSelectorGroup().pseudoNames.push(currentElement.name);
+    } else if (currentElement.type === 'attribute') {
+      if (currentElement.name === 'class') {
+        currentSelectorGroup().classes.push(currentElement.value);
+      } else if (currentElement.name === 'id') {
+        currentSelectorGroup().ids.push(currentElement.value);
+      }
+    } else if (currentElement.type === 'tag') {
+      currentSelectorGroup().tags.push(currentElement.name);
+    } else if (currentElement.type === 'descendant') {
+      createNewSelectorGroup(selectorGroups, selectorGroupTemplate);
+    }
+  }
+}
+
+/**
+ * [generateFullSelector description]
  *
- * @return {string}
+ * @param  {[type]}      parsedSelectorsOriginal  The parsed selectors for the included rule
+ * @param  {DECLARATION} declaration              A single CSS property/value pair as AST
+ * @param  {OPTIONS}     options                  User's options
+ * @param  {string[]}    styleErrors              Array of style related errors
+ * @return {string}                               [description]
  */
 function generateFullSelector (parsedSelectorsOriginal, declaration, options, styleErrors) {
   // Short circuit if nothing exists in the obj
@@ -202,36 +241,11 @@ function generateFullSelector (parsedSelectorsOriginal, declaration, options, st
     tags: [],
     ids: []
   };
-  function createNewSelectorGroup () {selectorGroups.push(_.cloneDeep(selectorGroupTemplate)); };
-  function currentSelectorGroup () { return selectorGroups[selectorGroups.length - 1]; };
 
   // initialize selector groups
   const selectorGroups = [];
-  createNewSelectorGroup();
-
-  // process selectors into groups
-  while (parsedSelectors.length > 0) {
-    const currentElement = parsedSelectors.shift();
-
-    switch (currentElement.type) {
-      case 'pseudo':
-        currentSelectorGroup().pseudoNames.push(currentElement.name);
-        break;
-      case 'attribute':
-        if (currentElement.name === 'class') {
-          currentSelectorGroup().classes.push(currentElement.value);
-        } else if (currentElement.name === 'id') {
-          currentSelectorGroup().ids.push(currentElement.value);
-        }
-        break;
-      case 'tag':
-        currentSelectorGroup().tags.push(currentElement.name);
-        break;
-      case 'descendant':
-        createNewSelectorGroup();
-        break;
-    }
-  }
+  createNewSelectorGroup(selectorGroups, selectorGroupTemplate);
+  processSelectorsIntoGroups(selectorGroups, parsedSelectors, selectorGroupTemplate);
 
   // give absolute order to individual selectors in a selector type in a group
   orderSelectorGroups(selectorGroups);
@@ -252,26 +266,29 @@ function generateFullSelector (parsedSelectorsOriginal, declaration, options, st
     }, '');
   }
 
-  const encodedClassName = encodeClassName(options, lastSelectorGroup, declaration, styleErrors).repeat(lastSelectorGroup.classes.length || 1);
+  const encodedClassName = encodeClassName(options, lastSelectorGroup, declaration, styleErrors)
+    .repeat(lastSelectorGroup.classes.length || 1);
 
-  return parentSelectors + helpers.joinStringArrayWithCharacterPrefix(lastSelectorGroup.tags) + encodedClassName + helpers.joinStringArrayWithCharacterPrefix(lastSelectorGroup.pseudoNames, ':');
+  return [
+    parentSelectors,
+    helpers.joinStringArrayWithCharacterPrefix(lastSelectorGroup.tags),
+    encodedClassName,
+    helpers.joinStringArrayWithCharacterPrefix(lastSelectorGroup.pseudoNames, ':')
+  ].join('');
 }
 
-// TODO AFD: jsdoc stuff
 /**
+ * [orderSelectorGroups description]
  *
- * @param selectorGroups
+ * @param  {[type]} selectorGroups  [description]
+ * @return {[type]}                 [description]
  */
 function orderSelectorGroups (selectorGroups) {
-  return selectorGroups.forEach(
-    function (selectorGroup) {
-      Object.values(selectorGroup).forEach(
-        function (selectorType) {
-          selectorType.sort((a, b) => a.localeCompare(b));
-        }
-      );
-    }
-  );
+  return selectorGroups.forEach(function (selectorGroup) {
+    Object.values(selectorGroup).forEach(function (selectorType) {
+      selectorType.sort((a, b) => a.localeCompare(b));
+    });
+  });
 }
 
 /**
