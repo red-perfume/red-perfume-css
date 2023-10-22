@@ -22,7 +22,7 @@ const input = `
 `;
 
 const results = redPerfumeCss({
-  uglify: false,
+  uglify: true,
   input
 });
 

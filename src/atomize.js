@@ -454,7 +454,8 @@ const atomize = function (options) {
     helpers.throwError(options, message, input);
     return {
       classMap: {},
-      atomizedCss: ''
+      atomizedCss: '',
+      styleErrors
     };
   }
 

@@ -68,6 +68,8 @@ const cssParser = function (options, input, styleErrors) {
     source: undefined
   };
   const parsed = css.parse(input, parseOptions);
+  // TODO: This line is only used to make console logs cleaner, can be commented out in the future for a performance boost
+  recursivelyRemovePosition(parsed?.stylesheet?.rules);
   /*
     input = '.test { color: #F00 }';
     parsed = {
@@ -105,17 +107,17 @@ const cssParser = function (options, input, styleErrors) {
       }
     }
    */
-  // if (parsed && parsed.stylesheet && parsed.stylesheet.rules) {
-  //   // TODO: This line is only used to make console logs cleaner, can be commented out in the future for a performance boost
-  //   recursivelyRemovePosition(parsed.stylesheet.rules);
-  //   parsed.stylesheet.rules.forEach(function (rule) {
-  //     let parsedSelectors = selectorParse(rule.selectors.join(','));
-  //     for (let i = 0; i < parsedSelectors.length; i++) {
-  //       parsedSelectors[i][0]['original'] = rule.selectors[i];
-  //     }
-  //     rule.selectors = parsedSelectors;
-  //   });
-  // }
+  /*
+  if (parsed?.stylesheet?.rules) {
+    parsed.stylesheet.rules.forEach(function (rule) {
+      let parsedSelectors = selectorParse(rule.selectors.join(','));
+      for (let i = 0; i < parsedSelectors.length; i++) {
+        parsedSelectors[i][0]['original'] = rule.selectors[i];
+      }
+      rule.selectors = parsedSelectors;
+    });
+  }
+   */
   // debugger;
 
   return parsed;
