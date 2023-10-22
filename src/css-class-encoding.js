@@ -7,7 +7,8 @@
 
 const {
   DECLARATION,
-  OPTIONS
+  OPTIONS,
+  SELECTORS
 } = require('../api-type-definitions.js');
 
 const constants = require('./constants.js');
@@ -114,26 +115,45 @@ function encodeString (str) {
 }
 
 /**
+ * Takes parts of a selector and returns them encoded with a prefix.
+ *
+ * @param  {Array}  fragments  A portion of a selector (tags, classes, etc)
+ * @param  {string} prefix     Matching prefix constant for this fragment type
+ * @return {string}            All related strings prefixed and joined
+ */
+function prependClassNameFragmentPrefix (fragments, prefix) {
+  const stringArray = fragments.map(function (fragment) {
+    return encodeString(fragment);
+  });
+  return helpers.joinStringArrayWithCharacterPrefix(stringArray, prefix);
+}
+
+/**
  * Encodes property/value pairs as valid, decodable classnames.
  *
  * @example
  * let encodedClassName = encodeClassName(options, declaration);
  *
  * @param  {OPTIONS}     options      User's passed in options, containing verbose/customLoger
+ * @param  {SELECTORS}   selectors    [description]
  * @param  {DECLARATION} declaration  Contains the Property and Value strings
  * @param  {string[]}    styleErrors  Array of strings for all style related errors
  * @return {string}                   A classname starting with . and a prefix
  */
-function encodeClassName (options, declaration, styleErrors) {
+function encodeClassName (options, selectors, declaration, styleErrors) {
   styleErrors = styleErrors || [];
   if (!declaration || declaration.property === undefined || declaration.value === undefined) {
     styleErrors.push(constants.IMPRESSED_MESSAGE);
     helpers.throwError(options, constants.IMPRESSED_MESSAGE);
   }
   declaration = declaration || {};
-  let newName = declaration.property + ':' + declaration.value;
-  let encoded = encodeString(newName);
-  return '.' + prefix + encoded;
+  const tagSection = prependClassNameFragmentPrefix(selectors.tags, constants.PREFIX.TAG);
+  const idSection = prependClassNameFragmentPrefix(selectors.ids, constants.PREFIX.ID);
+  const classSection = prependClassNameFragmentPrefix(selectors.classes, constants.PREFIX.CLASS) ;
+  const pseudoSection = prependClassNameFragmentPrefix(selectors.pseudoNames, constants.PREFIX.PSUEDO);
+  const newName = declaration.property + ':' + declaration.value;
+  const encoded = encodeString(newName);
+  return '.' + prefix + tagSection + idSection + classSection + pseudoSection + encoded;
 }
 
 // This is exported out too for a unit test

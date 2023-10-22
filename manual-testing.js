@@ -8,22 +8,24 @@
 const redPerfumeCss = require('./index.js');
 
 const input = `
-  .cow,
-  .cat {
-      font-size: 12px;
-      padding: 8px;
-  }
-  .dog {
-      font-size: 12px;
-      background: #F00;
-      padding: 8px;
-  }
+.cow #thing#test p .moo.type:hover:focus :hover {
+    margin: 4px;
+}.cow #thing#test p :hover p.moo.type:hover:focus {
+    margin: 4px;
+}
+.dog .woof {
+    margin: 4px;
+}
+.vehicle .car .horn {
+    margin: 4px;
+}
 `;
 
 const results = redPerfumeCss({
-  uglify: false,
+  uglify: true,
   input
 });
 
+debugger;
 console.log(input);
 console.log(results);

@@ -9,6 +9,30 @@ const { OPTIONS } = require('../api-type-definitions.js');
 
 const helpers = {
   /**
+   * Takes array of strings and prefixes each with a given value.
+   * Returns them joined on empty string.
+   *
+   * @param  {string[]} stringArray      Array of strings representing a portion of a selector to be prefixed
+   * @param  {string}   characterPrefix  A prefix constant.
+   * @return {string}                    The prefixed strings joined together.
+   */
+  joinStringArrayWithCharacterPrefix: function (stringArray, characterPrefix) {
+    if (
+      !Array.isArray(stringArray) ||
+      !stringArray.length
+    ) {
+      return '';
+    }
+    if (characterPrefix) {
+      return stringArray
+        .map(function (element) {
+          return characterPrefix + element;
+        })
+        .join('');
+    }
+    return stringArray.join('');
+  },
+  /**
    * Takes a string and replaces spaces with returns if
    * they are the last space on a console line (108 chars).
    *
